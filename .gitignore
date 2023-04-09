@@ -1,0 +1,23 @@
+# pyc
+__pycache__
+
+# Logging
+app.log
+
+# Unit test / coverage reports
+.coverage
+.coveragerc
+.pytest_cache
+.htmlcov
+
+# VS code
+.vscode
+.vscode/* 
+!.vscode/settings.json 
+!.vscode/tasks.json 
+!.vscode/launch.json 
+!.vscode/extensions.json 
+.history
+
+#venv
+venv
