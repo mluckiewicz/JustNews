@@ -48,12 +48,15 @@ class SettingsProxy:
         if self._SETTINGS is None:
             if settings_module is not None:
                 self._SETTINGS = Settings(settings_module)
-            self._SETTINGS = Settings("settings")
+            self._SETTINGS = Settings("config.settings")
 
     def __getattr__(self, name):
         value = self._SETTINGS.__dict__.get(name)
         self.__dict__[name] = value
         return value
+
+
+settings = SettingsProxy()
 
 
 if __name__ == "__main__":
@@ -65,5 +68,5 @@ if __name__ == "__main__":
     else:
         print("Singleton nie działa, obie zmienne mają różne instancje.")
 
-    print(s1.CONSTANT_ONE)
-    print(s1.CONSTANT_TWO)
+    print(s1.LANGUAGE)
+    print(s1.LANGUAGE)
