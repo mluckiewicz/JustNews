@@ -1,2 +1,2 @@
-CONSTANT_ONE = 1
-CONSTANT_TWO = 2
+SETTING_ONE = 'value_one'
+SETTING_TWO = 'value_two'
