@@ -1,6 +1,11 @@
 """
 Global settings for application
 """
+
+# Number of cores to work with
+MAX_CONCURRENCY = 8
+
+
 LANGUAGE = "PL"
 
 
