@@ -1,9 +1,29 @@
+from __future__ import annotations
+from typing import List
 import random
 import re
 import urllib.parse
 
 
 def url_validator(url: str) -> bool:
+    """The function checks the validity of the URL by validating the URL scheme, 
+    netlock, and port. It also ensures that the URL length is within the allowed limit 
+    and that the URL address has been specified.
+
+    Args:
+        url (str): The URL to validate.
+
+    Returns:
+        bool: True if the URL is valid, False otherwise.
+
+    Raises:
+        Exception: If the URL address has not been specified or the URL length is 
+            greater than 2048 characters.
+        Exception: If the URL scheme is not specified or is not http(s)/ftp(s).
+        Exception: If the URL netlock is not specified or is malformed.
+
+
+    """
     netlock_format = re.compile(
     # http basic authentication [optional]
     r"(?:^(\w{1,255}):(.{1,255})@|^)"
@@ -51,8 +71,16 @@ def url_validator(url: str) -> bool:
     return True
 
 
+def get_random_useragent(k: int = 1) -> List[str]:
+    """Return a randomly selected user-agent string from a pre-defined list.
+    
+    Args:
+        k (int): Number of user-agent strings to return. Defaults to 1.
 
-def get_random_useragent(k: int = 1):
+    Returns:
+        list: A list of k user-agent strings randomly selected from a pre-defined list.
+    """
+    
     ua_pct = {
         "ua": {
             "0": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/109.0.0.0 Safari/537.36",
