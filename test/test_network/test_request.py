@@ -7,11 +7,11 @@ from aiohttp import ClientSession
 
 sys.path.append(os.path.abspath(os.curdir))
 
-from network.request import AsyncRequest
+from network.request import AsyncDownloader
 
 class TestAsyncRequest(unittest.TestCase):
     def setUp(self):
-        self.async_request = AsyncRequest()
+        self.async_request = AsyncDownloader()
         self.loop = asyncio.get_event_loop()
 
     def tearDown(self):
@@ -48,7 +48,7 @@ class TestAsyncRequest(unittest.TestCase):
         download_all_sites_mock.return_value = asyncio.Future()
         download_all_sites_mock.return_value.set_result(expected_pages)
 
-        async_request = AsyncRequest()
+        async_request = AsyncDownloader()
         fetched_async_request = async_request.fetch(['https://www.example.com', 'https://www.example.net'])
 
         self.assertEqual(async_request, fetched_async_request)
