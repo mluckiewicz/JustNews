@@ -2,6 +2,7 @@ from __future__ import annotations
 from typing import Any
 import threading
 import importlib
+from core.exceptions import NotConfigured
 
 
 class Settings:
@@ -41,6 +42,21 @@ class Settings:
 class SettingsProxy:
     """
     A proxy class for accessing Settings Singelton instance.
+    
+    Example:
+    >>> if __name__ == "__main__":
+    >>>     s1 = SettingsProxy("settings")
+    >>>     s2 = SettingsProxy("settings")
+
+    >>> if id(s1._settings) == id(s2._settings):
+    >>>    print("Singleton działa, obie zmienne mają tę samą instancję.")
+    >>> else:
+    >>>    print("Singleton nie działa, obie zmienne mają różne instancje.")
+
+    >>> print(s1.ABBA)
+    >>> print(s1.LANGUAGE)
+    
+    
     """
     _SETTINGS = None
 
@@ -52,21 +68,8 @@ class SettingsProxy:
 
     def __getattr__(self, name):
         value = self._SETTINGS.__dict__.get(name)
+        if value is None:
+            raise NotConfigured(f"{name} is not defined in settings")
         self.__dict__[name] = value
         return value
-
-
-settings = SettingsProxy()
-
-
-if __name__ == "__main__":
-    s1 = SettingsProxy()
-    s2 = SettingsProxy()
-
-    if id(s1._settings) == id(s2._settings):
-        print("Singleton działa, obie zmienne mają tę samą instancję.")
-    else:
-        print("Singleton nie działa, obie zmienne mają różne instancje.")
-
-    print(s1.LANGUAGE)
-    print(s1.LANGUAGE)
+    

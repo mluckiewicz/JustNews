@@ -5,8 +5,12 @@ Global settings for application
 # Number of cores to work with
 MAX_CONCURRENCY = 8
 
-
+# BASE LANGUAGE
 LANGUAGE = "PL"
+
+
+# NETWORK
+COOKIES_CONSENT = {"CONSENT": "YES+1"}
 
 
 # STRING CLEANER SETTINGS
