@@ -1,5 +1,5 @@
-from webpage_queue import WebPageQueue, Subscriber
-from network.downloader import AsyncDownloader
+from core.webpage_queue.queue import WebPageQueue, Subscriber
+from core.network.downloader import AsyncDownloader
 
 
 class TestSub(Subscriber):
