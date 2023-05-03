@@ -7,7 +7,7 @@ from aiohttp import ClientSession
 
 sys.path.append(os.path.abspath(os.curdir))
 
-from network.request import AsyncDownloader
+from network.downloader import AsyncDownloader
 
 class TestAsyncRequest(unittest.TestCase):
     def setUp(self):

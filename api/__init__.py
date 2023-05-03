@@ -1,1 +1,1 @@
-from network.request import AsyncDownloader
+from network.downloader import AsyncDownloader
