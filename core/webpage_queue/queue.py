@@ -63,7 +63,6 @@ class WebPageQueue(Queue, Subject):
         >>>    def update(self, subject, item) -> None:
         >>>        print(f"Add {item}")
     
-    
         >>> q = WebPageQueue()
         >>> wp1 = Downloader(["https://www.google.com"])
         >>> q.put(wp1)

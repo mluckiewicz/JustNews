@@ -2,13 +2,14 @@ from __future__ import annotations
 from typing import List, Text
 import asyncio
 from aiohttp import ClientSession
-from webpage_queue.webpage import WebPage
+from config import settings
+from core.webpage_queue.webpage import WebPage
 from .utils import url_validator, get_random_useragent
 
 
 class AsyncDownloader:
     def __init__(self):
-        self.cookies = {"CONSENT": "YES+1"}
+        self.cookies = settings.COOKIES_CONSENT
         self.loop = asyncio.new_event_loop()
         self.headers = get_random_useragent()[0]
         asyncio.set_event_loop(self.loop)
