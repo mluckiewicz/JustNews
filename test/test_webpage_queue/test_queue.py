@@ -2,11 +2,10 @@ import os
 import sys
 import unittest
 from unittest.mock import Mock
-from queue import Empty
 
 sys.path.append(os.path.abspath(os.curdir))
 
-from webpage_queue.queue import WebPageQueue, Subscriber
+from core.webpage_queue.queue import WebPageQueue
 
 
 class MockSubscriber():

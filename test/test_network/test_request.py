@@ -17,7 +17,7 @@ class TestAsyncRequest(unittest.TestCase):
     def tearDown(self):
         self.loop.close()
 
-    @patch('network.utils.url_validator')
+    @patch('core.network.utils.url_validator')
     def test_download_all_sites(self, url_validator_mock):
         url_validator_mock.return_value = True
 
@@ -35,7 +35,7 @@ class TestAsyncRequest(unittest.TestCase):
             self.assertEqual(pages[0], expected_pages[0])
             self.assertEqual(pages[1], expected_pages[1])
 
-    @patch('network.request.AsyncRequest.download_all_sites')
+    @patch('core.network.downloader.AsyncRequest.download_all_sites')
     def test_fetch(self, download_all_sites_mock):
         expected_pages = [
             MagicMock(url='https://www.example.com', status_code=200, raw_html='<html>Example</html>'),
