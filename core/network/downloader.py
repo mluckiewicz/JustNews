@@ -1,5 +1,6 @@
 from __future__ import annotations
 from typing import List, Text
+from queue import Queue
 import asyncio
 from aiohttp import ClientSession
 from config import settings
@@ -14,8 +15,10 @@ class AsyncDownloader:
         self.headers = get_random_useragent()[0]
         asyncio.set_event_loop(self.loop)
 
-    async def download_single_site(self, session: ClientSession, url: Text, queue) -> None:
-        """Downloads a single webpage using the aiohttp library and returns an instance 
+    async def download_single_site(
+        self, session: ClientSession, url: Text, queue: Queue
+    ) -> None:
+        """Downloads a single webpage using the aiohttp library and returns an instance
         of the Page class.
 
         Args:
@@ -38,10 +41,8 @@ class AsyncDownloader:
             page.status_code = response.status
             page.raw_html = await response.text(errors="ignore")
             await queue.put(await page.get_page())
-             
-    async def download_all_sites(
-        self, sites: List[str], queue
-    ) -> None:
+
+    async def download_all_sites(self, sites: List[str], queue: Queue) -> None:
         """Downloads multiple webpages using the aiohttp library and returns a future
         object that resolves to a list of instances of the Page class.
 
@@ -51,7 +52,7 @@ class AsyncDownloader:
         Returns:
             None
         """
-        
+
         async with ClientSession() as session:
             tasks = []
             for url in sites:
@@ -62,9 +63,9 @@ class AsyncDownloader:
                     tasks.append(task)
             await asyncio.gather(*tasks, return_exceptions=True)
 
-    def fetch(self, sites: List[Text], queue) -> None:
-        """Downloads multiple webpages using the aiohttp library and returns an instance of
-        the AsyncRequest class with downloaded webpage information.
+    def fetch(self, sites: List[Text], queue: Queue) -> None:
+        """Downloads multiple webpages using the aiohttp library and returns an instance 
+        of the AsyncRequest class with downloaded webpage information.
 
         Args:
             sites (List[Text]): A list of URLs representing the webpages to download.
@@ -72,6 +73,6 @@ class AsyncDownloader:
         Returns:
             None
         """
-        
+
         self.loop.run_until_complete(self.download_all_sites(sites, queue))
         self.loop.stop()
