@@ -22,3 +22,9 @@ STRING_CLEANING_ORDER = [
     'text.BoundsHandler',
     'text.BeforePunctuationHandler',
 ]
+
+
+# EXTRACTORS
+EXTRACTORS = [
+    'core.extractors.Extractor'
+]
