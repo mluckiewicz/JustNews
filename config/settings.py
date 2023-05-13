@@ -3,7 +3,7 @@ Global settings for application
 """
 
 # Number of cores to work with
-MAX_CONCURRENCY = 8
+THREADS = 8
 
 # BASE LANGUAGE
 LANGUAGE = "PL"
@@ -25,6 +25,4 @@ STRING_CLEANING_ORDER = [
 
 
 # EXTRACTORS
-EXTRACTORS = [
-    'core.extractors.Extractor'
-]
+EXTRACTOR = 'core.extractors.Extractor'
