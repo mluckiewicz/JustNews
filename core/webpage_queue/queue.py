@@ -131,7 +131,7 @@ class WebPageQueue(Queue, Subject):
         Returns:
             None
         """
-
+        
         if event is None:
             for subscriber in self.subscribers:
                 subscriber.update(self, **kwargs)
@@ -150,18 +150,16 @@ class WebPageQueue(Queue, Subject):
         Returns:
             None
         """
-        
+
         super().put(item)
-        self.notify(event="item_added", item=item)
+        self.notify(event="item_added")
 
     def get(self) -> None:
-        """Retrieves an item from the queue and notifies subscribers that an item has 
-        been removed.
+        """Retrieves an item from the queue and notifies subscribers that an item has Sbeen removed.
 
         Returns:
             WebPage: The item retrieved from the queue.
         """
-
         item = super().get()
         self.notify(event="item_removed", item=item)
         return item
