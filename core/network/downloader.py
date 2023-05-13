@@ -40,22 +40,29 @@ class AsyncDownloader:
             page.url = url
             page.status_code = response.status
             page.raw_html = await response.text(errors="ignore")
-            await queue.put(await page.get_page())
+            await queue.put(await page.get_page()) #send notification to queue subscribers
 
     async def download_all_sites(self, sites: List[str], queue: Queue) -> None:
-        """Downloads multiple webpages using the aiohttp library and returns a future
-        object that resolves to a list of instances of the Page class.
+        """ Downloads the contents of a list of sites using asyncio and adds them to a 
+        queue.
+        
+        In each iteration pops one url form given list.
 
         Args:
-            sites (List[Text]): A list of URLs representing the webpages to download.
+            sites (List[str]): A list of URLs to download.
+            queue (Queue): A queue to add the downloaded site contents to.
 
         Returns:
-            None
+            None.
+
+        Raises:
+            None.
         """
 
         async with ClientSession() as session:
             tasks = []
-            for url in sites:
+            while len(sites) > 0:
+                url = sites.pop()
                 if url_validator(url):
                     task = asyncio.ensure_future(
                         self.download_single_site(session, url, queue)
@@ -75,4 +82,3 @@ class AsyncDownloader:
         """
 
         self.loop.run_until_complete(self.download_all_sites(sites, queue))
-        self.loop.stop()
