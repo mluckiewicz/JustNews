@@ -14,7 +14,7 @@ from core.webpage_queue.queue import WebPageQueue
 class TestAsyncDownloader(unittest.TestCase):
     def setUp(self):
         self.async_downloader = AsyncDownloader()
-        self.loop = asyncio.get_event_loop()
+        self.loop = asyncio.new_event_loop()
         self.queue = Mock(spec=WebPageQueue)
 
     def tearDown(self):
