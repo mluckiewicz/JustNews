@@ -1,5 +1,6 @@
 from __future__ import annotations
 from typing import Text
+from ..article import Article
 
 
 class WebPage:
@@ -44,7 +45,7 @@ class WebPage:
     
     @article.setter
     def article(self, value):
-        self._article = value
+        self._article = value or Article()
         
     def __repr__(self) -> str:
         return f'Page(url={self.url}), status_code={self.status_code}'
