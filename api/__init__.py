@@ -18,7 +18,6 @@ class JustNews:
         self._urls = urls
         self._queue = queue or WebPageQueue()
         self._producer = producer or AsyncDownloader()
-
         self._consumers = None
         self._treads = None
 
@@ -39,7 +38,7 @@ class JustNews:
             self._run_synchronous_mode()
         else:
             self._run_threading_mode()
-
+        
     def _run_synchronous_mode(self) -> None:
         """Runs the application in synchronous mode.
 
@@ -52,6 +51,7 @@ class JustNews:
     
         pass
 
+    # TODO refactor this method to more elegant wat
     def _run_threading_mode(self) -> None:
         """Runs the application in threaded mode.
 
