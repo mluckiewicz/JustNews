@@ -50,7 +50,7 @@ class WebPageQueueTestCase(unittest.TestCase):
         subscriber = MockSubscriber()
         self.queue.subscribe(subscriber, "item_added")
         self.queue.put("example.com")
-        subscriber.update.assert_called_once_with(self.queue, item="example.com")
+        subscriber.update.assert_called_once_with(self.queue)
 
     def test_get(self):
         item = "example.com"
