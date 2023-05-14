@@ -1,7 +1,6 @@
 from abc import ABC, abstractmethod
-import time
-from ..webpage_queue.queue import Subscriber
 import threading
+from ..webpage_queue.queue import Subscriber
 
 
 class ExtractorInterface(ABC):
@@ -17,14 +16,10 @@ class Extractor(Subscriber):
     def update(self, queue) -> None:
         while True:
             page = queue.get()
-            print(f"{threading.current_thread().name} przetwarza: {page}")
+            print(f"{threading.current_thread().name} przetwarza: {page.article}")
 
-    def process_page(self, page):
-        # code to process the page
-        #print(f"processing {page}")
+    def run_extraction(self, root):
         return
         
     def handle_result(self, future):
-        # code to handle the result of the processed page
-        #print("handle processing resault")
         return
