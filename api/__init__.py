@@ -1,7 +1,8 @@
-from typing import List, Type
-import importlib
+from __future__ import annotations
+from typing import List
 from threading import Thread
 from config import settings
+from config.utils import create_instance
 from core.webpage_queue.queue import WebPageQueue
 from core.network.downloader import AsyncDownloader
 
@@ -38,7 +39,7 @@ class JustNews:
             self._run_synchronous_mode()
         else:
             self._run_threading_mode()
-        
+
     def _run_synchronous_mode(self) -> None:
         """Runs the application in synchronous mode.
 
@@ -47,8 +48,8 @@ class JustNews:
 
         Raises:
             None.
-        """    
-    
+        """
+
         pass
 
     # TODO refactor this method to more elegant wat
@@ -66,7 +67,7 @@ class JustNews:
         Raises:
             None.
         """
-        
+
         self._consumers = JustNews.create_consumers()
         self._treads = self.create_threads()
         self.boot_threads()
@@ -100,7 +101,7 @@ class JustNews:
         Raises:
             None.
         """
-        
+
         return [
             Thread(target=consumer.update, kwargs={"queue": self._queue})
             for consumer in self._consumers
@@ -119,7 +120,7 @@ class JustNews:
         Raises:
             None.
         """
-        
+
         for thread in self._treads:
             thread.daemon = True
             thread.start()
@@ -137,31 +138,6 @@ class JustNews:
         Raises:
             None.
         """
-        
+
         while len(self._urls) > 0:
             self._producer.fetch(self._urls, self._queue)
-
-
-def create_instance(class_path: str) -> Type[object]:
-    """Creates an instance of a class based on the given string that represents its absolute path.
-
-    Args:
-        class_path (str): Absolute path to the class declaration, using dot notation.
-
-    Raises:
-        AttributeError: If the class name is not found in the module.
-        ModuleNotFoundError: If the module specified in the class path is not found.
-
-    Returns:
-        Type[object]: Instance of the found class.
-    """
-
-    try:
-        module_path, class_name = class_path.rsplit(".", 1)
-        module = importlib.import_module(module_path)
-        class_obj = getattr(module, class_name)
-        return class_obj()
-    except (AttributeError, ModuleNotFoundError) as e:
-        raise ModuleNotFoundError(
-            f"Error creating instance of class '{class_path}': {e}"
-        )
