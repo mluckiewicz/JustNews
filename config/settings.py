@@ -14,13 +14,13 @@ COOKIES_CONSENT = {"CONSENT": "YES+1"}
 
 
 # STRING CLEANER SETTINGS
-STRING_CLEANER = 'text.StringCleaner'
-STRING_CLEANING_ORDER = [
-    'text.TrimHandler',
-    'text.WhiteSpaceHandler',
-    'text.MultipleSpaceHandler',
-    'text.BoundsHandler',
-    'text.BeforePunctuationHandler',
+STRING_SANITIZER = 'core.text.sanitizer.StringSanitizer'
+SANITIZATION_ORDER = [
+    'core.text.sanitizer.TrimHandler',
+    'core.text.sanitizer.WhiteSpaceHandler',
+    'core.text.sanitizer.MultipleSpaceHandler',
+    'core.text.sanitizer.BoundsHandler',
+    'core.text.sanitizer.BeforePunctuationHandler',
 ]
 
 
