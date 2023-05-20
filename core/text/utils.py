@@ -1,10 +1,13 @@
 from __future__ import annotations
 import string
 import re
+import os
+import codecs
 
 
 __all__ = [
-    "StringHelper"
+    "StringHelper", 
+    "ResourceLoader"
 ]
 
 
@@ -88,3 +91,21 @@ class StringHelper:
             str: _description_
         """
         return "".join(c for c in text if __class__.valid_char_ordinal(c))
+
+
+class ResourceLoader(object):
+    @staticmethod
+    def load_resoruce_file(filename):
+        
+        if not os.path.isabs(filename):
+            dirpath = os.path.abspath(os.path.dirname(__file__))
+            path = os.path.join(dirpath, 'resources', filename)
+        else:
+            path = filename
+            
+        try:
+            with codecs.open(path, 'r', 'utf-8') as f:
+                content = f.read()
+            return content
+        except IOError:
+            raise IOError("Couldn't open file %s" % path)
