@@ -1,14 +1,12 @@
 from __future__ import annotations
 from typing import List
-import os
 from config import settings
-from .utils import StringHelper
+from .utils import StringHelper, ResourceLoader
 
 
 class Stopwords:
     def __init__(self, lang: str) -> None:
         self.lang = lang or settings.LANGUAGE.lower()
-        self.current_path = os.path.dirname(os.path.abspath(" "))
         self.stopwords = None
 
     @property
@@ -25,18 +23,9 @@ class Stopwords:
     
     @stopwords.setter
     def stopwords(self, _):
-        
-        # TODO Refactor
-        resource_path = os.path.join(
-            os.path.dirname(self.current_path),
-            "news_extractor",
-            "src",
-            "stopwords",
-            f"stopwords_{self.lang}.txt"
-            )
-
-        with open(resource_path, encoding='utf-8') as f:
-            self._stopwords = [word.strip() for word in f.readlines()]
+        _file = f"stopwords_{self.lang}.txt"
+        _content = ResourceLoader.load_resoruce_file(_file)
+        self._stopwords = [word.strip() for word in _content]
         
     def count(self, text: str) -> int:
         """ It is responsible for counting the number of stopwords in the submitted text
@@ -51,7 +40,3 @@ class Stopwords:
         tokkens = stripped_text.strip().split(' ')
         stopwords_count = len([w for w in tokkens if w.lower() in self.stopwords])
         return stopwords_count
-        
-        
-if __name__ == '__main__':
-    print(os.path.dirname(os.path.abspath(" ")))
