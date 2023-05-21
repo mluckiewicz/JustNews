@@ -1,43 +1,41 @@
 import sys
 import unittest
-from unittest.mock import MagicMock
-import lxml
 import os
 
 sys.path.append(os.path.abspath(os.curdir))
 
-from core.text.sanitizer import (
-    TrimHandler,
-    WhiteSpaceHandler,
-    MultipleSpaceHandler,
-    BoundsHandler,
-    BeforePunctuationHandler,
+from core.text.text_cleaner import (
+    TrimTokens,
+    RemoveWhiteSpaces,
+    RemoveMultipleSpaces,
+    TrimString,
+    RemoveSpacesBeforePunctuation,
     clean_string
 )
 
 CURRENT_PATH = os.path.dirname(os.path.abspath(__file__))
 
 
-class TestTrimHandler(unittest.TestCase):
+class TestTrimTokens(unittest.TestCase):
     def setUp(self) -> None:
         self.maxDiff = None
-        self.handler = TrimHandler()
+        self.handler = TrimTokens()
         
-    def test_trimhandler_clean_removed(self):
+    def test_clean_removed(self):
         to_clean = "   test Case   string   , to clean    "
         self.assertEqual(
             self.handler.clean(to_clean), 
             "test Case string , to clean"
             )
         
-    def test_trimhandler_clean_none(self):
+    def test_clean_none(self):
         to_clean = None
         self.assertEqual(
             self.handler.clean(to_clean), 
             None
             )
         
-    def test_trimhandler_clean_zero_len(self):
+    def test_clean_zero_len(self):
         to_clean = ""
         self.assertEqual(
             self.handler.clean(to_clean), 
@@ -45,10 +43,10 @@ class TestTrimHandler(unittest.TestCase):
             )
         
 
-class TestWhitespacesHandler(unittest.TestCase):
+class TestRemoveWhiteSpaces(unittest.TestCase):
     def setUp(self) -> None:
         self.maxdiff = None
-        self.handler = WhiteSpaceHandler()
+        self.handler = RemoveWhiteSpaces()
         
     def test_replace_n_single_positive(self):
         to_clean = "this is test\n case string"
@@ -86,10 +84,10 @@ class TestWhitespacesHandler(unittest.TestCase):
         )     
             
             
-class TestWhitespacesHandler(unittest.TestCase):
+class TestRemoveMultipleSpaces(unittest.TestCase):
     def setUp(self) -> None:
         self.maxdiff = None
-        self.handler = MultipleSpaceHandler()
+        self.handler = RemoveMultipleSpaces()
         
     def test_replace_front_positive(self):
         to_clean = "    this is test case string"
@@ -120,10 +118,10 @@ class TestWhitespacesHandler(unittest.TestCase):
         )
         
 
-class TestBoundsHandler(unittest.TestCase):
+class TestTrimString(unittest.TestCase):
     def setUp(self) -> None:
         self.maxdiff = None
-        self.handler = BoundsHandler()
+        self.handler = TrimString()
         
     def test_replace_multiplespace_front_positive(self):
         to_clean = "    this is test case string"
@@ -147,10 +145,10 @@ class TestBoundsHandler(unittest.TestCase):
         )
         
 
-class TestBeforePunctuationHandler(unittest.TestCase):
+class TestRemoveSpacesBeforePunctuation(unittest.TestCase):
     def setUp(self) -> None:
         self.maxdiff = None
-        self.handler = BeforePunctuationHandler()
+        self.handler = RemoveSpacesBeforePunctuation()
         
     def test_replace_before_punct_at_end_positive(self):
         to_clean = "this is test case string ."
@@ -160,7 +158,7 @@ class TestBeforePunctuationHandler(unittest.TestCase):
         )
         
  
-class TestCleaningChain(unittest.TestCase):
+class TestCleaningTextContext(unittest.TestCase):
     def setUp(self) -> None:
         self.maxdiff = None
         
