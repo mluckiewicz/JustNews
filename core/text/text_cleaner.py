@@ -92,7 +92,7 @@ class CleaningTextContext:
     ) -> None:
         self.text = text
         self.cleaning_strategies = cleaning_strategies or list(
-            map(create_instance, list(settings.SANITIZATION_ORDER))
+            map(create_instance, list(settings.TEXT_CLEANING_ORDER))
         )
 
     def append(self, cleaning_strategies: TextCleaningStrategy) -> None:
