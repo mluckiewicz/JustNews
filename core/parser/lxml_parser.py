@@ -6,11 +6,8 @@ from typing import List, Dict, Text
 from html import unescape
 import lxml
 from lxml.html import soupparser, HtmlElement
+from .parser import Parser
 from ..text.utils import StringHelper 
-
-
-class Parser(ABC):
-    pass
 
 
 class LXMLParser(Parser):
