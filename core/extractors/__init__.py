@@ -1,7 +1,7 @@
 from abc import ABC, abstractmethod
 import threading
 from ..webpage_queue.queue import Subscriber
-from core.text.sanitizer import get_chain
+from core.text.text_cleaner import clean_string
 
 
 class ExtractorInterface(ABC):
@@ -11,15 +11,15 @@ class ExtractorInterface(ABC):
 
 
 class Extractor(Subscriber):
-    def __init__(self, text_sanitizer=None) -> None:
-        self.text_sanitizer = text_sanitizer or get_chain()
+    def __init__(self) -> None:
+        pass
 
     def update(self, queue) -> None:
         while True:
             page = queue.get()
             text = " text  "
             print(
-                f"{threading.current_thread().name} przetwarza: {self.text_sanitizer.clean(text)}"
+                f"{threading.current_thread().name} przetwarza: {clean_string(text)}"
             )
 
     def run_extraction(self, root):
