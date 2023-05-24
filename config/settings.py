@@ -29,10 +29,10 @@ EXTRACTOR = "core.extractors.Extractor"
 
 # TREE CLEANING ORDER
 NODE_CONTENT_NORMALIZERS = [
-    "core.cleaner.node_text_normalizer.NodeTextNormalizer",
-    "core.cleaner.node_text_normalizer.NodeTailNormalizer",
-    "core.cleaner.node_text_normalizer.NodeFlatteningNormalizer",
-    "core.cleaner.node_text_normalizer.TextTailConnNormalizer",
+    "core.cleaner.node_content_normalizer.NodeTextNormalizer",
+    "core.cleaner.node_content_normalizer.NodeTailNormalizer",
+    "core.cleaner.node_content_normalizer.NodeFlatteningNormalizer",
+    "core.cleaner.node_content_normalizer.TextTailJoiner",
 ]
 
 
