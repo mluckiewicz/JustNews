@@ -1,13 +1,42 @@
+"""
+Module for creating a chain of responsibility to normalize node text and tail.
+The goal is to return a flattened node with only the text value, removing any tail value and any children with text or tail.
+
+Classes:
+    Normalizer (ABC):
+        Abstract base class for defining a normalizer in the chain of responsibility.
+
+    AbstractNormalizer (Normalizer):
+        Abstract class that provides a default implementation for setting the next normalizer and normalizing an HTML element.
+
+    NodeTextNormalizer (AbstractNormalizer):
+        Concrete normalizer responsible for sanitizing the text value of a node.
+
+    NodeTailNormalizer (AbstractNormalizer):
+        Concrete normalizer responsible for transferring a node's tail to its text value.
+
+    TextTailJoiner (AbstractNormalizer):
+        Concrete normalizer responsible for joining the text and tail values of a node.
+
+    NodeFlatteningNormalizer (AbstractNormalizer):
+        Concrete normalizer responsible for flattening the node by extracting the text of the entire subtree.
+
+    NodeContentNormalizer:
+        Class responsible for creating and managing the normalization chain.
+
+"""
+
 from __future__ import annotations
 from typing import List, Callable
 from abc import ABC, abstractmethod
 from lxml.html import HtmlElement
-from ..parser.parser import Parser
+from config import settings
+from config.utils import create_instance
+from core.parser.parser import Parser
 from core.text.text_cleaner import clean_string
 
 
 class Normalizer(ABC):
-    
     @abstractmethod
     def set_next(self, normalizer: Normalizer) -> Normalizer:
         pass
@@ -18,10 +47,10 @@ class Normalizer(ABC):
 
 
 class AbstractNormalizer(Normalizer):
-    def __init__(self):
+    def __init__(self) -> None:
         self.next = None
 
-    def get_normalizer(self):
+    def get_normalizer(self) -> Normalizer:
         return self
 
     def set_next(self, normalizer: Normalizer) -> Normalizer:
@@ -33,7 +62,7 @@ class AbstractNormalizer(Normalizer):
         Returns:
             Normalizer: The next normalizer.
         """
-        
+
         self.next = normalizer
         return normalizer
 
@@ -83,19 +112,19 @@ class NodeTailNormalizer(AbstractNormalizer):
         return super().normalize(node, parser)
 
 
-class TextTailNormalizer(AbstractNormalizer):
+class TextTailJoiner(AbstractNormalizer):
     def normalize(self, node: HtmlElement, parser: Parser):
         node_text = parser.get_text_value(node)
         node_tail = parser.get_tail_value(node)
-        
+
         # In some casess tail or text are NoneType. To prevent TypeError if so their
         # value will be set to zero len string.
         if not isinstance(node_text, str):
             node_text = ""
-            
+
         if not isinstance(node_tail, str):
             node_tail = ""
-        
+
         joined_text = " ".join([node_text, node_tail])
         parser.set_text_value(node, joined_text)
         parser.set_tail_value(node, None)
@@ -103,35 +132,75 @@ class TextTailNormalizer(AbstractNormalizer):
 
 
 class NodeFlatteningNormalizer(AbstractNormalizer):
-    """ Gets the text of the entire subtree if the parent has its own text. 
-    If it doesn't, it doesn't perform any operation. 
+    """Gets the text of the entire subtree if the parent has its own text.
+    If it doesn't, it doesn't perform any operation.
     """
+
     def normalize(self, node: HtmlElement, parser: Parser):
-        #node_text = parser.get_text_value(node)
         if parser.have_childs(node):
-            subtree_text = clean_string(
-                parser.get_subtree_text(node)
-            )
+            subtree_text = clean_string(parser.get_subtree_text(node))
             parser.set_text_value(node, subtree_text)
             parser.remove_all_childerns(node)
         return super().normalize(node, parser)
 
 
-class NodeTextNormalizingChain:
-    def __init__(self, *normalizers: List[Normalizer]):
-        self.chain = list(normalizers)
+class NodeContentNormalizer:
+    """
+    Responsible for creating a normalization chain.
 
-    def append(self, normalizer: Normalizer) -> None:
-        self.chain.append(normalizer)
+    Args:
+        links (List[str] | List[Normalizer], optional):
+            A list of links or normalizers for creating the normalization chain.
+            Defaults to None.
 
-    def create_normalizing_chain(self) -> AbstractNormalizer:
-        first = self.chain[0]
-        while len(self.chain) > 0:
-            current = self.chain.pop(0)
-            if len(self.chain) >= 1:
-                next = self.chain[0]
-            elif len(self.chain) == 0:
-                next = None
-                
-            current.set_next(next)
-        return first
+    Attributes:
+        first_link: The first link in the normalization chain.
+
+    Methods:
+        create_chain(links: List[str] | List[Normalizer] = None) -> None:
+            Creates a normalization chain from the given links or normalizers.
+
+    """
+
+    def __init__(self, links: List[str] | List[Normalizer] = None) -> None:
+        self.first_link = None
+        self.create_chain(links)
+
+    @property
+    def first_link(self):
+        """
+        Get the first link in the normalization chain.
+
+        Returns:
+            The first link in the normalization chain.
+
+        """
+        return self._first_link
+
+    def create_chain(self, links: List[str] | List[Normalizer] = None) -> None:
+        """
+        Creates a normalization chain from the given links or normalizers.
+        If links arent passed method will access to settings constant and create list of links based on it.
+        Next first element of this list will by assigned to self.first.
+        After that next elements of links list will by join to create real chain.
+
+        Args:
+            links (List[str] | List[Normalizer], optional):
+                A list of links or normalizers for creating the normalization chain.
+                Defaults to None.
+
+        """
+        if not _links:
+            raise ValueError("No links or normalizers provided.")
+        
+        # creates list of non conected links
+        _links = links or [
+            create_instance(link) for link in settings.NODE_CONTENT_NORMALIZERS
+        ]
+
+        # set first link
+        self.first = _links[0]
+
+        # Set the next links
+        for i in range(len(_links) - 1):
+            _links[i].set_next(_links[i + 1])
