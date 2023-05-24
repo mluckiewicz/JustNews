@@ -48,7 +48,6 @@ class DocumentCleaner(BasicCleaner):
             self.composite.add_strategy(
                 self.remove_by_attr_match("class", self.attribiutes_blacklist)
             )
-
             self.composite.add_strategy(
                 self.remove_by_attr_match("id", self.attribiutes_blacklist)
             )
