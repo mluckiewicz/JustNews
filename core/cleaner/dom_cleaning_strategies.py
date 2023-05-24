@@ -3,16 +3,9 @@ from typing import List, Text, Literal
 from abc import ABC, abstractmethod
 import queue
 from lxml.html import HtmlElement
-from ..parser.parser import Parser
-from .node_text_normalizer import (
-    AbstractNormalizer,
-    NodeTextNormalizingChain,
-    NodeFlatteningNormalizer,
-    NodeTailNormalizer,
-    NodeTextNormalizer,
-    TextTailNormalizer,
-)
-from ..text.utils import StringHelper
+from core.parser import Parser
+from core.cleaner.node_content_normalizer import NodeContentNormalizer
+from core.text.utils import StringHelper
 from core.utils import compare_lists
 
 
@@ -86,16 +79,8 @@ class CommentsRemover(RemoverStrategy):
 
 
 class TextNormalizer(RemoverStrategy):
-    def __init__(self) -> None:
-        self.normalizer: AbstractNormalizer = self.set_normalizer()
-
-    def set_normalizer(self):
-        _chain = NodeTextNormalizingChain()
-        _chain.append(NodeTextNormalizer())
-        _chain.append(NodeTailNormalizer())
-        _chain.append(NodeFlatteningNormalizer())
-        _chain.append(TextTailNormalizer())
-        return _chain.create_normalizing_chain()
+    def __init__(self, content_normalizer) -> None:
+        self.normalizer: content_normalizer or NodeContentNormalizer().first_link
 
     def execute(self, root: HtmlElement, parser: Parser) -> HtmlElement:
         text_nodes = parser.get_nodes_with_text(root)
