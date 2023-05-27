@@ -3,7 +3,7 @@ from typing import Type
 import importlib
 
 
-def create_instance(class_path: str) -> Type[object]:
+def create_instance(class_path: str, *agrs, **kwargs) -> Type[object]:
     """Creates an instance of a class based on the given string that represents its absolute path.
 
     Args:
@@ -21,8 +21,9 @@ def create_instance(class_path: str) -> Type[object]:
         module_path, class_name = class_path.rsplit(".", 1)
         module = importlib.import_module(module_path)
         class_obj = getattr(module, class_name)
-        return class_obj()
+        return class_obj(*agrs, **kwargs)
     except (AttributeError, ModuleNotFoundError) as e:
         raise ModuleNotFoundError(
             f"Error creating instance of class '{class_path}': {e}"
         )
+        
