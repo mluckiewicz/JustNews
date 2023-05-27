@@ -14,15 +14,15 @@ urls = [
         "https://remiza.com.pl/ustron-wybuch-gazu-w-domu-wielorodzinnym-trwa-dramatyczna-akcja-ratunkowa/",
         "https://gloswielkopolski.pl/wypadek-w-deborzycach-na-drodze-wojewodzkiej-187-jedna-osoba-zginela-na-miejscu-droga-byla-zablokowana/ar/c16-17162949",
         "https://wiadomosci.onet.pl/poznan/wypadek-miedzy-czaczem-a-karsnicami-21-latka-zmarla-po-rocznej-walce/l7wnl8p",
-        "https://24tp.pl/n/102136",
-        "https://wpr24.pl/wypadek-wiatrakowca-w-baranowie-foto/",
-        "https://doba.pl/dkl/artykul/wypadek-na-krajowej-osemce-na-wysokosci-lewina-klodzkiego-zderzenie-czolowe-interwencja-lpr/35264/15",
-        "https://gloswielkopolski.pl/wypadek-w-ostrowie-wielkopolskim-ranna-kobieta-trafila-do-szpitala-wideo/ar/c4-17164503",
-        "https://autokult.pl/dramatyczny-wypadek-pod-swiebodzinem-zginelo-dwoch-mezczyzn-z-auta-nic-nie-zostalo,6851198209600352a",
-        "https://wydarzenia.interia.pl/zagranica/news-peru-turysci-uciekaja-z-kraju-ogloszono-stan-wyjatkowy,nId,6534475",
-        "https://wydarzenia.interia.pl/swietokrzyskie/news-karambol-na-drodze-s74-zderzylo-sie-okolo-40-aut-sa-poszkodo,nId,6537495",
-        "https://wydarzenia.interia.pl/zagranica/news-wypadek-z-udzialem-tesli-silnik-wystrzelil-i-wyladowal-45-me,nId,6552006",
-        "https://tvn24.pl/tvnwarszawa/okolice/dawidy-bankowe-wypadek-radiowozu-z-nastolatkami-postepowanie-dyscyplinarne-trwa-sledczy-przesluchuja-swiadkow-6641361",
+        # "https://24tp.pl/n/102136",
+        # "https://wpr24.pl/wypadek-wiatrakowca-w-baranowie-foto/",
+        # "https://doba.pl/dkl/artykul/wypadek-na-krajowej-osemce-na-wysokosci-lewina-klodzkiego-zderzenie-czolowe-interwencja-lpr/35264/15",
+        # "https://gloswielkopolski.pl/wypadek-w-ostrowie-wielkopolskim-ranna-kobieta-trafila-do-szpitala-wideo/ar/c4-17164503",
+        # "https://autokult.pl/dramatyczny-wypadek-pod-swiebodzinem-zginelo-dwoch-mezczyzn-z-auta-nic-nie-zostalo,6851198209600352a",
+        # "https://wydarzenia.interia.pl/zagranica/news-peru-turysci-uciekaja-z-kraju-ogloszono-stan-wyjatkowy,nId,6534475",
+        # "https://wydarzenia.interia.pl/swietokrzyskie/news-karambol-na-drodze-s74-zderzylo-sie-okolo-40-aut-sa-poszkodo,nId,6537495",
+        # "https://wydarzenia.interia.pl/zagranica/news-wypadek-z-udzialem-tesli-silnik-wystrzelil-i-wyladowal-45-me,nId,6552006",
+        # "https://tvn24.pl/tvnwarszawa/okolice/dawidy-bankowe-wypadek-radiowozu-z-nastolatkami-postepowanie-dyscyplinarne-trwa-sledczy-przesluchuja-swiadkow-6641361",
         # "https://olsztyn.tvp.pl/65830787/tragiczny-skutki-pozaru-nie-zyje-70latek",
         # "https://www.msn.com/pl-pl/wiadomosci/polska/czujka-monitoringu-sklepu-w-jastrz%C4%99biu-da%C5%82a-stra%C5%BCakom-sygna%C5%82-o-po%C5%BCarze-na-miejsce-pojecha%C5%82y-cztery-stra%C5%BCackie-zast%C4%99py-co-si%C4%99-okaza%C5%82o/ar-AA16W18k",
         # "https://www.se.pl/poznan/policyjna-oblawa-i-poscig-za-morderca-w-poznaniu-podejrzany-zginal-w-wypadku-aa-smrg-oJJJ-ebVy.html",
@@ -93,5 +93,5 @@ urls = [
         # "https://www.iturek.net/rozmaitosci/malanow-wypadek-w-czachulcu-dwie",
 ] 
 
-jn = JustNews(urls=urls, sync=False)
+jn = JustNews(urls=urls, sync=False, parser_name="lxml")
 jn.run()
