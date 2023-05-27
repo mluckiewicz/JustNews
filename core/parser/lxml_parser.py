@@ -1,19 +1,20 @@
-import re
-import logging
-import string
-from abc import ABC
+from __future__ import annotations
 from typing import List, Dict, Text
+import re
+import string
 from html import unescape
-import lxml
-from lxml.html import soupparser, HtmlElement
-from .parser import Parser
-from ..text.utils import StringHelper 
+from lxml.html import soupparser, HtmlElement, fromstring
+from core.parser.parser import Parser
+from core.text.utils import StringHelper
 
 
 class LXMLParser(Parser):
     @classmethod
     def clean_html(cls, html: str) -> str:
-        """Wykonuje konwersję na potrzeby prawidłowego odczytania znaków
+        """
+        Method performs the conversion for the correct reading of characters in HTML. 
+        It takes the raw HTML and removes certain elements from it, 
+        such as XML statements or opening/closing tags. Returns sanitized HTML.
         https://stackoverflow.com/questions/8733233/filtering-out-certain-bytes-in-python
         """
         cleaned_html = StringHelper.adjust_string_to_xml(html)
@@ -22,8 +23,9 @@ class LXMLParser(Parser):
 
     @classmethod
     def fromstring(cls, html: str) -> HtmlElement:
-        """ The method is responsible parse the html and returning root element.
-        lxml.html.soupparser.fromstring was choosen because the lxml.html.fromstring 
+        """
+        The method is responsible parse the html and returning root element.
+        lxml.html.soupparser.fromstring was choosen because the lxml.html.fromstring
         method does not handle some pages.
 
         Args:
@@ -32,14 +34,13 @@ class LXMLParser(Parser):
         Returns:
             HtmlElement: Root element
         """
-        error = None
         try:
             html = cls.clean_html(html)
             root = soupparser.fromstring(html)
             return root
         except Exception:
-            #Invalid HTML tag name
-            root = lxml.html.fromstring(html)
+            # Invalid HTML tag name
+            root = fromstring(html)
             return root
 
     @classmethod
@@ -101,7 +102,7 @@ class LXMLParser(Parser):
         return node.xpath("//comment()")
 
     @classmethod
-    def remove(cls, node: HtmlElement, keep_tail: bool=False) -> None:
+    def remove(cls, node: HtmlElement, keep_tail: bool = False) -> None:
         parent = node.getparent()
         if parent is not None:
             if node.tail:
@@ -123,7 +124,7 @@ class LXMLParser(Parser):
         if parent is not None:
             node.clear()
             parent.remove(node)
-            
+
     @classmethod
     def remove_all_childerns(cls, node: HtmlElement) -> None:
         for child in list(node):
@@ -141,7 +142,7 @@ class LXMLParser(Parser):
         """
         nodes = node.xpath("//body//*[normalize-space(text())]")
         return nodes
-    
+
     @classmethod
     def generate_node_with_text(cls, node):
         for node in node.xpath("//body//*[normalize-space(text())]"):
@@ -158,19 +159,19 @@ class LXMLParser(Parser):
         parrent text."""
         inner_text = " ".join([word.strip() for word in node.itertext()])
         return inner_text
-    
+
     @classmethod
     def get_tail_value(cls, node: HtmlElement) -> str:
         return node.tail
-    
+
     @classmethod
     def get_text_value(cls, node: HtmlElement) -> str:
         return node.text
-    
+
     @classmethod
     def set_tail_value(cls, node: HtmlElement, value) -> str:
         node.tail = value
-    
+
     @classmethod
     def set_text_value(cls, node: HtmlElement, value) -> str:
         node.text = value
@@ -187,7 +188,7 @@ class LXMLParser(Parser):
     def set_attribute(cls, node: HtmlElement, attr=None, value=None):
         if attr and value:
             node.set(attr, value)
-            
+
     @classmethod
     def del_attribute(cls, node: HtmlElement, attr=None):
         if attr:
@@ -254,7 +255,7 @@ class LXMLParser(Parser):
 
     @classmethod
     def have_childs(cls, node: HtmlElement) -> bool:
-        """ Returns True if given node have descedents in first degree.
+        """Returns True if given node have descedents in first degree.
 
         Args:
             node (HtmlElement): node for wich che
@@ -266,4 +267,3 @@ class LXMLParser(Parser):
         if childs:
             return True
         return False
-            
