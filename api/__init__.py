@@ -1,6 +1,6 @@
 from __future__ import annotations
 from typing import List
-from threading import Thread
+from concurrent.futures import ThreadPoolExecutor
 from config import settings
 from config.utils import create_instance
 from core.webpage_queue.queue import WebPageQueue
@@ -14,6 +14,7 @@ class JustNews:
         queue: WebPageQueue = None,
         producer: AsyncDownloader = None,
         sync=True,
+        parser_name: str = None,
     ) -> None:
         self._sync = sync
         self._urls = urls
@@ -21,6 +22,9 @@ class JustNews:
         self._producer = producer or AsyncDownloader()
         self._consumers = None
         self._treads = None
+        self._parser = create_instance(
+            settings.PARSAERS.get(parser_name, settings.DEFAULT_PARSER)
+        )
 
     def run(self) -> None:
         """Runs the application using either synchronous or threaded mode.
@@ -36,11 +40,11 @@ class JustNews:
             None.
         """
         if self._sync:
-            self._run_synchronous_mode()
+            self.synchronous_mode()
         else:
-            self._run_threading_mode()
+            self.threading_mode()
 
-    def _run_synchronous_mode(self) -> None:
+    def synchronous_mode(self) -> None:
         """Runs the application in synchronous mode.
 
         Returns:
@@ -49,95 +53,27 @@ class JustNews:
         Raises:
             None.
         """
-
         pass
 
-    # TODO refactor this method to more elegant wat
-    def _run_threading_mode(self) -> None:
-        """Runs the application in threaded mode.
-
-        Creates a list of consumers using the `create_consumers()` method,
-        creates a list of threads using the `create_threads()` method, and
-        boots the threads using the `boot_threads()` method. Finally, it
-        processes the URLs using the `process_urls()` method.
-
-        Returns:
-            None.
-
-        Raises:
-            None.
+    def threading_mode(self) -> None:
         """
-
-        self._consumers = JustNews.create_consumers()
-        self._treads = self.create_threads()
-        self.boot_threads()
-        self.process_urls()
-
-    @staticmethod
-    def create_consumers() -> List[object]:
-        """This method creates a list of consumer instances based on the `settings.EXTRACTOR` setting and the number of threads specified in `settings.THREADS`.
-
-        Args:
-            None
-
-        Returns:
-            A list of consumer instances.
-
-        Raises:
-            None
+        The threading_mode method initializes a thread pool and subscribes a subscriber 
+        to a queue. 
+        
+        It then proceeds to process URLs using the specified threading mode.
         """
-
-        return [create_instance(settings.EXTRACTOR) for _ in range(settings.THREADS)]
-
-    def create_threads(self) -> List[Thread]:
-        """Creates a list of threads, each running a consumer's update method.
-
-        The update method of each consumer is called in a separate thread,
-        with a reference to the shared queue instance passed as a keyword argument.
-
-        Returns:
-            A list of `Thread` instances, each running a consumer's update method.
-
-        Raises:
-            None.
-        """
-
-        return [
-            Thread(target=consumer.update, kwargs={"queue": self._queue})
-            for consumer in self._consumers
-        ]
-
-    def boot_threads(self) -> None:
-        """Starts all the threads and subscribes them to the queue's "item_added" event.
-
-        For each thread in the list of threads, sets the `daemon` flag to `True`,
-        starts the thread, and subscribes it to the queue's "item_added" event.
-        This event will be triggered every time an item is added to the queue.
-
-        Returns:
-            None.
-
-        Raises:
-            None.
-        """
-
-        for thread in self._treads:
-            thread.daemon = True
-            thread.start()
-            self._queue.subscribe(thread, "item_added")
+        with ThreadPoolExecutor(max_workers=settings.THREADS) as thread_pool:
+            subscriber = create_instance(settings.EXTRACTOR, thread_pool, self._parser)
+            self._queue.subscribe(subscriber, "item_added")
+            self.process_urls()
 
     def process_urls(self) -> None:
         """Fetches the URLs using the producer and puts them in the queue.
 
         The method loops while there are URLs left to process. It calls the
         producer's `fetch()` method to fetch the URLs and put them in the queue.
-
-        Returns:
-            None.
-
-        Raises:
-            None.
         """
 
         while len(self._urls) > 0:
             self._producer.fetch(self._urls, self._queue)
+            
