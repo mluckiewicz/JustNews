@@ -13,6 +13,15 @@ LANGUAGE = "PL"
 COOKIES_CONSENT = {"CONSENT": "YES+1"}
 
 
+# Parser settings
+DEFAULT_PARSER = "core.parser.lxml_parser.LXMLParser"
+
+# Dictionary of parsers
+PARSAERS = {
+    "lxml": "core.parser.lxml_parser.LXMLParser"
+}
+
+
 # STRING CLEANER SETTINGS
 TEXT_CLEANING_ORDER = [
     "core.text.text_cleaner.TrimTokens",
@@ -20,19 +29,6 @@ TEXT_CLEANING_ORDER = [
     "core.text.text_cleaner.RemoveMultipleSpaces",
     "core.text.text_cleaner.TrimString",
     "core.text.text_cleaner.RemoveSpacesBeforePunctuation",
-]
-
-
-# EXTRACTORS
-EXTRACTOR = "core.extractors.Extractor"
-
-
-# TREE CLEANING ORDER
-NODE_CONTENT_NORMALIZERS = [
-    "core.cleaner.node_content_normalizer.NodeTextNormalizer",
-    "core.cleaner.node_content_normalizer.NodeTailNormalizer",
-    "core.cleaner.node_content_normalizer.NodeFlatteningNormalizer",
-    "core.cleaner.node_content_normalizer.TextTailJoiner",
 ]
 
 
@@ -140,3 +136,16 @@ ATTRIBIUTES_BLACKLIST = [
     "plus18",
     "reglog",
 ]
+
+
+# TREE CLEANING ORDER
+NODE_CONTENT_NORMALIZERS = [
+    "core.cleaner.node_content_normalizer.NodeTextNormalizer",
+    "core.cleaner.node_content_normalizer.NodeTailNormalizer",
+    "core.cleaner.node_content_normalizer.NodeFlatteningNormalizer",
+    "core.cleaner.node_content_normalizer.TextTailJoiner",
+]
+
+
+# EXTRACTORS
+EXTRACTOR = "core.extractors.Extractor"
