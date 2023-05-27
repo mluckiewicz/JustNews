@@ -5,7 +5,7 @@ import asyncio
 from aiohttp import ClientSession
 from config import settings
 from core.webpage_queue.webpage import WebPage
-from .utils import url_validator, get_random_useragent
+from core.network.utils import url_validator, get_random_useragent
 
 
 class AsyncDownloader:
@@ -40,7 +40,7 @@ class AsyncDownloader:
             page.url = url
             page.status_code = response.status
             page.raw_html = await response.text(errors="ignore")
-            await queue.put(await page.get_page()) #send notification to queue subscribers
+            await queue.put(page) #send notification to queue subscribers
 
     async def download_all_sites(self, sites: List[str], queue: Queue) -> None:
         """ Downloads the contents of a list of sites using asyncio and adds them to a 
