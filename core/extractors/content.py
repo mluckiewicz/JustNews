@@ -5,7 +5,7 @@ from lxml.html import HtmlElement
 from core.parser.parser import Parser
 from core.text.stopwords import Stopwords
 from core.text.utils import StringHelper
-from core.extractors import ExtractorInterface
+from core.extractors.interface import ExtractorInterface
 
 
 class ContentExtractor(ExtractorInterface):
