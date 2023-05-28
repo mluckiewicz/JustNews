@@ -1,19 +1,12 @@
 from __future__ import annotations
-from abc import ABC, abstractmethod
 from concurrent.futures import ThreadPoolExecutor
 import threading
-from logger import get_logger
 from core.parser.parser import Parser
 from core.extractors.content import ContentExtractor
 from core.webpage_queue.queue import WebPageQueue, Subscriber
 from core.webpage_queue.webpage import WebPage
+from core.cleaner.dom_cleaner import DocumentCleaner
 
-
-class ExtractorInterface(ABC):
-    @abstractmethod
-    def extract(self):
-        pass
-    
 
 class Extractor(Subscriber):
     def __init__(self, thread_pool: ThreadPoolExecutor, parser: Parser) -> None:
@@ -25,5 +18,9 @@ class Extractor(Subscriber):
         
     def extract(self, page: WebPage) -> object:
         print(f"Przetwarzam element: {page} wątkiem o identyfikatorze: {threading.get_ident()}")
-        dom = self.parser.fromstring(page.raw_html)
-        page.article = ContentExtractor().extract(dom, self.parser)
+        cleaner = DocumentCleaner()
+        root = self.parser.fromstring(page.raw_html)
+        cleaned = cleaner.execute(root, self.parser)
+        page.article.content = ContentExtractor().extract(cleaned, self.parser)
+        print(page.article.content)
+        print('\n')
