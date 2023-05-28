@@ -86,6 +86,7 @@ class AbstractNormalizer(Normalizer):
 class NodeTextNormalizer(AbstractNormalizer):
     def _sanitize_text_value(self, node: HtmlElement, parser: Parser) -> None:
         "Its resposobile for sanitizing concrete node text value"
+        
         node_text = parser.get_text_value(node)
         if node_text is not None:
             node_text = clean_string(node_text)
@@ -166,17 +167,6 @@ class NodeContentNormalizer:
         self.first_link = None
         self.create_chain(links)
 
-    @property
-    def first_link(self):
-        """
-        Get the first link in the normalization chain.
-
-        Returns:
-            The first link in the normalization chain.
-
-        """
-        return self._first_link
-
     def create_chain(self, links: List[str] | List[Normalizer] = None) -> None:
         """
         Creates a normalization chain from the given links or normalizers.
@@ -190,16 +180,14 @@ class NodeContentNormalizer:
                 Defaults to None.
 
         """
-        if not _links:
-            raise ValueError("No links or normalizers provided.")
-        
+
         # creates list of non conected links
         _links = links or [
             create_instance(link) for link in settings.NODE_CONTENT_NORMALIZERS
         ]
 
-        # set first link
-        self.first = _links[0]
+        # set first link in node normalizer. It will be called as first
+        self.first_link = _links[0]
 
         # Set the next links
         for i in range(len(_links) - 1):
