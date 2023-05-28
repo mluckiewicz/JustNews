@@ -9,11 +9,11 @@ urls = [
         "https://remiza.com.pl/wypadek-na-dk62-nie-zyje-jedna-osoba/",
         "https://dziennikzachodni.pl/wypadek-w-ustroniu-strazacy-jechali-do-wybuchu-gazu-zderzyli-sie-z-osobowka/ar/c1-17099979",
         "https://dziennikzachodni.pl/pijany-kierowca-wjechal-w-dabrowie-gorniczej-na-wysepke-ronda-z-auta-wyciagneli-go-przechodnie/ar/c1-17160473",
-        "https://torun.naszemiasto.pl/wypadek-w-czarnowie-na-dk-80-nad-ranem-samochod-staranowal/ar/c1-9116891",
-        "https://bialystok.naszemiasto.pl/bialystok-wypadek-przy-sadzieget_text-dwa-samochody-rozbite-dwie/ar/c16-9123509",
-        "https://remiza.com.pl/ustron-wybuch-gazu-w-domu-wielorodzinnym-trwa-dramatyczna-akcja-ratunkowa/",
-        "https://gloswielkopolski.pl/wypadek-w-deborzycach-na-drodze-wojewodzkiej-187-jedna-osoba-zginela-na-miejscu-droga-byla-zablokowana/ar/c16-17162949",
-        "https://wiadomosci.onet.pl/poznan/wypadek-miedzy-czaczem-a-karsnicami-21-latka-zmarla-po-rocznej-walce/l7wnl8p",
+        # "https://torun.naszemiasto.pl/wypadek-w-czarnowie-na-dk-80-nad-ranem-samochod-staranowal/ar/c1-9116891",
+        # "https://bialystok.naszemiasto.pl/bialystok-wypadek-przy-sadzieget_text-dwa-samochody-rozbite-dwie/ar/c16-9123509",
+        # "https://remiza.com.pl/ustron-wybuch-gazu-w-domu-wielorodzinnym-trwa-dramatyczna-akcja-ratunkowa/",
+        # "https://gloswielkopolski.pl/wypadek-w-deborzycach-na-drodze-wojewodzkiej-187-jedna-osoba-zginela-na-miejscu-droga-byla-zablokowana/ar/c16-17162949",
+        # "https://wiadomosci.onet.pl/poznan/wypadek-miedzy-czaczem-a-karsnicami-21-latka-zmarla-po-rocznej-walce/l7wnl8p",
         # "https://24tp.pl/n/102136",
         # "https://wpr24.pl/wypadek-wiatrakowca-w-baranowie-foto/",
         # "https://doba.pl/dkl/artykul/wypadek-na-krajowej-osemce-na-wysokosci-lewina-klodzkiego-zderzenie-czolowe-interwencja-lpr/35264/15",
@@ -92,6 +92,6 @@ urls = [
         # "https://piensk.naszemiasto.pl/czy-beda-planowane-wylaczenia-pradu-w-piensku-1202/ar/c1p1-20594716",
         # "https://www.iturek.net/rozmaitosci/malanow-wypadek-w-czachulcu-dwie",
 ] 
-
+ 
 jn = JustNews(urls=urls, sync=False, parser_name="lxml")
 jn.run()
