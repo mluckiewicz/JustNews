@@ -3,7 +3,7 @@ from typing import List, Text, Literal
 from abc import ABC, abstractmethod
 import queue
 from lxml.html import HtmlElement
-from core.parser import Parser
+from core.parser.parser import Parser
 from core.cleaner.node_content_normalizer import NodeContentNormalizer
 from core.text.utils import StringHelper
 from core.utils import compare_lists
@@ -79,8 +79,8 @@ class CommentsRemover(RemoverStrategy):
 
 
 class TextNormalizer(RemoverStrategy):
-    def __init__(self, content_normalizer) -> None:
-        self.normalizer: content_normalizer or NodeContentNormalizer().first_link
+    def __init__(self) -> None:
+        self.normalizer = NodeContentNormalizer().first_link
 
     def execute(self, root: HtmlElement, parser: Parser) -> HtmlElement:
         text_nodes = parser.get_nodes_with_text(root)
@@ -227,10 +227,7 @@ class NonSentenceRemover(RemoverStrategy):
     def execute(self, root: HtmlElement, parser: Parser) -> HtmlElement:
         text_nodes = parser.get_nodes_with_text(root)
         try:
-        
-            avg = sum(
-                [len(parser.get_text_value(node)) for node in text_nodes]
-                ) / len(text_nodes)
+            avg = sum([len(parser.get_text_value(node)) for node in text_nodes]) / len(text_nodes)
         except ZeroDivisionError:
             avg = 50
         for node in text_nodes:
@@ -282,3 +279,4 @@ class TransferUpTree(RemoverStrategy):
                 except TypeError:  # if parent or grandparent are NoneType
                     continue
         return root
+    
