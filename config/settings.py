@@ -3,36 +3,36 @@ Global settings for application
 """
 
 # Number of cores to work with
+
 THREADS = 8
 
+
 # BASE LANGUAGE
-LANGUAGE = "PL"
+
+LANGUAGE = "pl"
 
 
-# NETWORK
+# NETWORK SETTINGS
+
 COOKIES_CONSENT = {"CONSENT": "YES+1"}
 
 
-# Parser settings
+# PARSER SETTINGS
+
+# Default
 DEFAULT_PARSER = "core.parser.lxml_parser.LXMLParser"
 
-# Dictionary of parsers
+# Available parsers
 PARSAERS = {
     "lxml": "core.parser.lxml_parser.LXMLParser"
 }
 
 
-# STRING CLEANER SETTINGS
-TEXT_CLEANING_ORDER = [
-    "core.text.text_cleaner.TrimTokens",
-    "core.text.text_cleaner.RemoveWhiteSpaces",
-    "core.text.text_cleaner.RemoveMultipleSpaces",
-    "core.text.text_cleaner.TrimString",
-    "core.text.text_cleaner.RemoveSpacesBeforePunctuation",
-]
+# DOM CLEANER SETTINGS
+# Base dom cleaner
+CLEANER = "core.cleaner.dom_cleaner.DocumentCleaner"
 
-
-# DOM CLEANERS
+# Dom cleaning strategies. Will be applied in order below
 DOM_CLEANERS = [
     "core.cleaner.dom_cleaning_strategies.AttribiuteRemover",
     "core.cleaner.dom_cleaning_strategies.TagRemover",
@@ -47,12 +47,18 @@ DOM_CLEANERS = [
     "core.cleaner.dom_cleaning_strategies.TransferUpTree",
 ]
 
+# Order of links from TextNormalizer class. Any node with text value will be pushed through those links in order to make node flat. 
+NODE_CONTENT_NORMALIZERS = [
+    "core.cleaner.node_content_normalizer.NodeTextNormalizer",
+    "core.cleaner.node_content_normalizer.NodeTailNormalizer",
+    "core.cleaner.node_content_normalizer.NodeFlatteningNormalizer",
+    "core.cleaner.node_content_normalizer.TextTailJoiner",
+]
 
-# LIST OF WHITE TAGS VALUES FOR DocumentCLeaner
+# List of tags that will never be deleted from dom
 TAG_WHITELIST = ["body", "article"]
 
-
-# LIST OF BLACK TAGS VALUES FOR DocumentCLeaner
+# List of tags taht will be deleted from dom
 TAG_BLACKLIST = [
     "script",
     "style",
@@ -80,9 +86,7 @@ TAG_BLACKLIST = [
     "h4",
 ]
 
-
-# LIST OF ATRRIB VALUES FOR DocumentCLeaner
-# It contains attrib values for chack match with id and class values
+# List of atrrib values taht match will be check in id or class. If match is positive that node will be removed from dom
 ATTRIBIUTES_BLACKLIST = [
     "facebook",
     "tweet",
@@ -138,14 +142,27 @@ ATTRIBIUTES_BLACKLIST = [
 ]
 
 
-# TREE CLEANING ORDER
-NODE_CONTENT_NORMALIZERS = [
-    "core.cleaner.node_content_normalizer.NodeTextNormalizer",
-    "core.cleaner.node_content_normalizer.NodeTailNormalizer",
-    "core.cleaner.node_content_normalizer.NodeFlatteningNormalizer",
-    "core.cleaner.node_content_normalizer.TextTailJoiner",
+# STRING CLEANER SETTINGS
+
+# List of chain links. Any text from content node will be pushed through before top node calculation. The goal is to remove any bad chars form nodes content.
+TEXT_CLEANING_ORDER = [
+    "core.text.text_cleaner.TrimTokens",
+    "core.text.text_cleaner.RemoveWhiteSpaces",
+    "core.text.text_cleaner.RemoveMultipleSpaces",
+    "core.text.text_cleaner.TrimString",
+    "core.text.text_cleaner.RemoveSpacesBeforePunctuation",
 ]
 
 
-# EXTRACTORS
+# EXTRACTION SETTINGS
+# Extraction controler
 EXTRACTOR = "core.extractors.Extractor"
+
+# Concrete article parts extractor
+EXTRACTORS = {
+    "content_extractor": {
+        "extractor": "core.extractors.content.ContentExtractor",
+        "string_len": 25,
+        "stopwords_count": 2,
+        }
+}
