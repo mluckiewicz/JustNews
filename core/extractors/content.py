@@ -2,20 +2,25 @@ from __future__ import annotations
 from typing import Text, List
 import statistics
 from lxml.html import HtmlElement
+from config import settings
+from config.utils import create_instance
+from core.extractors.interface import ExtractorInterface
 from core.parser.parser import Parser
 from core.text.stopwords import Stopwords
 from core.text.utils import StringHelper
-from core.extractors.interface import ExtractorInterface
 
 
 class ContentExtractor(ExtractorInterface):
-    INNER_TEXT_LEN = 25
-    STOPWORDS_COUNT = 2
-
-    def __init__(self) -> None:
-        """ """
+    def __init__(self, root: HtmlElement, parser: Parser) -> None:
         self.tags = ["p", "pre", "td"]
-        self.stopwords = Stopwords("pl")
+        self.stopwords = Stopwords(settings.LANGUAGE)
+        self.dom_cleaner = create_instance(settings.CLEANER)
+        self.string_len = settings.EXTRACTORS["content_extractor"]["string_len"]
+        self.stopwords_count = settings.EXTRACTORS["content_extractor"][
+            "stopwords_count"
+        ]
+        self.root = root
+        self.parser = parser
 
     def get_nodes_with_text(self, root: HtmlElement) -> List[HtmlElement]:
         """The method is responsible for filtering nodes containing text
@@ -39,8 +44,8 @@ class ContentExtractor(ExtractorInterface):
                 inner_text_len = len(inner_text)
                 stopwords_count = self.stopwords.count(inner_text)
                 if (
-                    inner_text_len > self.INNER_TEXT_LEN
-                    and stopwords_count > self.STOPWORDS_COUNT
+                    inner_text_len > self.string_len
+                    and stopwords_count > self.stopwords_count
                 ):
                     nodes_with_text.append(node)
         return nodes_with_text
@@ -185,7 +190,7 @@ class ContentExtractor(ExtractorInterface):
         normalized_score_parents = self.normalize_nodes_score(scored_parents)
         return normalized_score_parents
 
-    def extract(self, root: HtmlElement, parser: Parser) -> Text:
+    def extract(self) -> Text:
         """External interface. It is responsible for calling individual methods, which in effect return the uncleaned text of the article.
 
         Args:
@@ -195,9 +200,15 @@ class ContentExtractor(ExtractorInterface):
         Returns:
             str: Uncleaned text of the article.
         """
-        if root is not None:
-            self.parser = parser
-            scored_inner_nodes = self.calculate_nodes_scoring(root)
+
+        if self.root is not None:
+            cleaned = self.dom_cleaner.execute(self.root, self.parser)
+
+            try:
+                scored_inner_nodes = self.calculate_nodes_scoring(cleaned)
+            except Exception as e:
+                print(e)
+
             self.top_node = self.get_top_node(scored_inner_nodes)
 
             if self.top_node is not None:
