@@ -23,9 +23,7 @@ COOKIES_CONSENT = {"CONSENT": "YES+1"}
 DEFAULT_PARSER = "core.parser.lxml_parser.LXMLParser"
 
 # Available parsers
-PARSAERS = {
-    "lxml": "core.parser.lxml_parser.LXMLParser"
-}
+PARSAERS = {"lxml": "core.parser.lxml_parser.LXMLParser"}
 
 
 # DOM CLEANER SETTINGS
@@ -47,7 +45,7 @@ DOM_CLEANERS = [
     "core.cleaner.dom_cleaning_strategies.TransferUpTree",
 ]
 
-# Order of links from TextNormalizer class. Any node with text value will be pushed through those links in order to make node flat. 
+# Order of links from TextNormalizer class. Any node with text value will be pushed through those links in order to make node flat.
 NODE_CONTENT_NORMALIZERS = [
     "core.cleaner.node_content_normalizer.NodeTextNormalizer",
     "core.cleaner.node_content_normalizer.NodeTailNormalizer",
@@ -164,5 +162,14 @@ EXTRACTORS = {
         "extractor": "core.extractors.content.ContentExtractor",
         "string_len": 25,
         "stopwords_count": 2,
-        }
+    },
+    "canonical_extractor": {
+        "extractor": "core.extractors.canonical.CanonicalExtractor",
+        "patterns": [
+            '//link[rel="canonical"]/@href',
+            '//meta[@property="og:url"]/@content',
+            '//meta[@http-equiv="Link" and contains(@content, "rel=canonical")]/@content',
+            '//link[@itemprop="url"]/@href'
+        ]
+    },
 }
