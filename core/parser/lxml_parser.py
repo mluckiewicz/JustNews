@@ -228,6 +228,10 @@ class LXMLParser(Parser):
         regexp_namespace = "http://exslt.org/regular-expressions"
         items = root.xpath(expression, namespaces={"re": regexp_namespace})
         return items
+    
+    @classmethod
+    def css_select(cls, node, selector):
+        return node.cssselect(selector)
 
     @classmethod
     def map_children(cls, nodes: List[HtmlElement]) -> Dict[Text, List[HtmlElement]]:
