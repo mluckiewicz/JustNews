@@ -172,4 +172,7 @@ EXTRACTORS = {
             '//link[@itemprop="url"]/@href'
         ]
     },
+    "title_extractor": {
+        "extractor": "core.extractors.title.TitleExtractor"
+    },
 }
