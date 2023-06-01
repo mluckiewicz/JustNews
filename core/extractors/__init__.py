@@ -21,14 +21,26 @@ class Extractor(Subscriber):
             f"Przetwarzam element: {page} wątkiem o identyfikatorze: {threading.get_ident()}"
         )
         root = self.parser.fromstring(page.raw_html)
-        
+
+
+        #TODO
+        # If i want add new extractor i shouldnt add it directly to and extractor.
+        # Maybe there is a way to create concrete extractors in diffrent way.
+        # Each one need to know to what article attribiute return value.
         content_extractor = create_instance(
             settings.EXTRACTORS["content_extractor"]["extractor"], root, self.parser
         )
-        
+        try:
+            title_extractor = create_instance(
+            settings.EXTRACTORS["title_extractor"]["extractor"], root, self.parser
+            )
+        except Exception as e:
+            print(e)
+
         canonical_extractor = create_instance(
             settings.EXTRACTORS["canonical_extractor"]["extractor"], root, self.parser
         )
 
         page.article.canonical = canonical_extractor.extract()
+        page.article.title = title_extractor.extract()
         page.article.content = content_extractor.extract()
