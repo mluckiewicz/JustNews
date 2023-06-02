@@ -173,6 +173,10 @@ EXTRACTORS = {
         ]
     },
     "title_extractor": {
-        "extractor": "core.extractors.title.TitleExtractor"
+        "extractor": "core.extractors.title.TitleExtractor",
+        "patterns": [
+            '//title',
+            '//meta[@property="og:url"]/@content',
+        ]
     },
 }
