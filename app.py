@@ -91,7 +91,7 @@ urls = [
         # "https://www.msn.com/pl-pl/wiadomosci/polska/niecodzienny-wypadek-w-gminie-iwanowice-samoch%C3%B3d-wpad%C5%82-do-rzeki-d%C5%82ubni-jedna-osoba-poszkodowana/ar-AA17ohJU",
         # "https://piensk.naszemiasto.pl/czy-beda-planowane-wylaczenia-pradu-w-piensku-1202/ar/c1p1-20594716",
         # "https://www.iturek.net/rozmaitosci/malanow-wypadek-w-czachulcu-dwie",
-] 
- 
+]
+
 jn = JustNews(urls=urls, sync=False, parser_name="lxml")
 jn.run()
