@@ -158,13 +158,9 @@ EXTRACTOR = "core.extractors.Extractor"
 
 # Concrete article parts extractor
 EXTRACTORS = {
-    "content_extractor": {
-        "extractor": "core.extractors.content.ContentExtractor",
-        "string_len": 25,
-        "stopwords_count": 2,
-    },
     "canonical_extractor": {
         "extractor": "core.extractors.canonical.CanonicalExtractor",
+        "article_attr": "canonical",
         "patterns": [
             '//link[rel="canonical"]/@href',
             '//meta[@property="og:url"]/@content',
@@ -174,9 +170,28 @@ EXTRACTORS = {
     },
     "title_extractor": {
         "extractor": "core.extractors.title.TitleExtractor",
+        "article_attr": "title",
         "patterns": [
             '//title',
             '//meta[@property="og:url"]/@content',
         ]
     },
+    "publishdate_extractor": {
+        "extractor": "core.extractors.publishdate.PublishdateExtractor",
+        "article_attr": "publish_date",
+        "patterns": [
+            '//meta[@property="rnews:datePublished"]/@content',
+            '//meta[@property="article:published_time"]/@content',
+            '//meta[@property="OriginalPublicationDate"]/@content',
+            '//meta[@property="rnews:datePublished"]/@content',
+            '//meta[@itemprop="datePublished"]/@content',
+            '//meta[@property="article:published_time"]/@content',
+        ]
+    },
+    "content_extractor": {
+        "extractor": "core.extractors.content.ContentExtractor",
+        "article_attr": "content",
+        "string_len": 25,
+        "stopwords_count": 2,
+    }
 }
