@@ -57,9 +57,9 @@ class JustNews:
 
     def threading_mode(self) -> None:
         """
-        The threading_mode method initializes a thread pool and subscribes a subscriber 
-        to a queue. 
-        
+        The threading_mode method initializes a thread pool and subscribes a subscriber
+        to a queue.
+
         It then proceeds to process URLs using the specified threading mode.
         """
         with ThreadPoolExecutor(max_workers=settings.THREADS) as thread_pool:
@@ -76,4 +76,3 @@ class JustNews:
 
         while len(self._urls) > 0:
             self._producer.fetch(self._urls, self._queue)
-            
