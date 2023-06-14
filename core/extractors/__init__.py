@@ -16,31 +16,39 @@ class Extractor(Subscriber):
     def update(self, web_queue: WebPageQueue) -> None:
         self.thread_pool.submit(self.extract, web_queue.get())
 
+    def register_extractors(self):
+        """
+        1. Mapowanie ekstraktora na atrybut klasy page.article
+        2. Wyeliminowanie konieczności ręcznej modyfikacji metody extract
+        """
+        pass
+
+
     def extract(self, page: WebPage) -> object:
         print(
             f"Przetwarzam element: {page} wątkiem o identyfikatorze: {threading.get_ident()}"
         )
+
         root = self.parser.fromstring(page.raw_html)
 
+        for extractor_name, extractor_settings in settings.EXTRACTORS.items():
+            # check if extractor settings ar ok
+            if not ("extractor" in extractor_settings
+                and "article_attr" in extractor_settings):
+                raise AttributeError(f"Extractor: {extractor_name} dont implement extracor or article_attr setting.")
 
-        #TODO
-        # If i want add new extractor i shouldnt add it directly to and extractor.
-        # Maybe there is a way to create concrete extractors in diffrent way.
-        # Each one need to know to what article attribiute return value.
-        content_extractor = create_instance(
-            settings.EXTRACTORS["content_extractor"]["extractor"], root, self.parser
-        )
-        try:
-            title_extractor = create_instance(
-            settings.EXTRACTORS["title_extractor"]["extractor"], root, self.parser
-            )
-        except Exception as e:
-            print(e)
+            # assign name of article property to return data after extraction
+            article_attr = extractor_settings["article_attr"]
 
-        canonical_extractor = create_instance(
-            settings.EXTRACTORS["canonical_extractor"]["extractor"], root, self.parser
-        )
+            # check if article has correct property
+            if hasattr(page.article, article_attr):
+                try:
+                    extractor = create_instance(
+                        settings.EXTRACTORS[extractor_name]["extractor"], root, self.parser
+                    )
+                except Exception as e:
+                    print(e)
 
-        page.article.canonical = canonical_extractor.extract()
-        page.article.title = title_extractor.extract()
-        page.article.content = content_extractor.extract()
+                # return extraction data
+                page.article.article_attr = extractor.extract()
+                print(f"{article_attr}: {page.article.article_attr}")
