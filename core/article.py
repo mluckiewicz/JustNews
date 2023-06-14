@@ -12,7 +12,8 @@ class Article:
         self.key_words = None
         self.canonical = None
         self.content = None
-        
+        self.publish_date = None
+
     @property
     def base_url(self):
         return self._base_url
@@ -36,7 +37,7 @@ class Article:
     @description.setter
     def description(self, value):
         self._description = value
-        
+
     @property
     def lead(self):
         return self._lead
@@ -62,6 +63,14 @@ class Article:
         self._canonical = value
 
     @property
+    def publish_date(self):
+        return self._publish_date
+
+    @publish_date.setter
+    def publish_date(self, value):
+        self._publish_date = value
+
+    @property
     def content(self):
         return self._content
 
@@ -74,7 +83,7 @@ class Article:
 
     def as_json(self):
         return json.dumps(
-            self, 
+            self,
             default=lambda o: vars(o),
-            indent=4, 
+            indent=4,
             ensure_ascii=False)
