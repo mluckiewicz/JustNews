@@ -16,14 +16,6 @@ class Extractor(Subscriber):
     def update(self, web_queue: WebPageQueue) -> None:
         self.thread_pool.submit(self.extract, web_queue.get())
 
-    def register_extractors(self):
-        """
-        1. Mapowanie ekstraktora na atrybut klasy page.article
-        2. Wyeliminowanie konieczności ręcznej modyfikacji metody extract
-        """
-        pass
-
-
     def extract(self, page: WebPage) -> object:
         print(
             f"Przetwarzam element: {page} wątkiem o identyfikatorze: {threading.get_ident()}"
@@ -31,10 +23,11 @@ class Extractor(Subscriber):
 
         root = self.parser.fromstring(page.raw_html)
 
+        # mapping extractor to article attr
         for extractor_name, extractor_settings in settings.EXTRACTORS.items():
             # check if extractor settings ar ok
             if not ("extractor" in extractor_settings
-                and "article_attr" in extractor_settings):
+                 and "article_attr" in extractor_settings):
                 raise AttributeError(f"Extractor: {extractor_name} dont implement extracor or article_attr setting.")
 
             # assign name of article property to return data after extraction
@@ -42,13 +35,7 @@ class Extractor(Subscriber):
 
             # check if article has correct property
             if hasattr(page.article, article_attr):
-                try:
-                    extractor = create_instance(
-                        settings.EXTRACTORS[extractor_name]["extractor"], root, self.parser
-                    )
-                except Exception as e:
-                    print(e)
-
-                # return extraction data
-                page.article.article_attr = extractor.extract()
-                print(f"{article_attr}: {page.article.article_attr}")
+                extractor = create_instance(
+                    settings.EXTRACTORS[extractor_name]["extractor"], root, self.parser
+                )
+                setattr(page.article, article_attr, extractor.extract())
