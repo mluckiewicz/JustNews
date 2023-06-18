@@ -12,8 +12,8 @@ class LXMLParser(Parser):
     @classmethod
     def clean_html(cls, html: str) -> str:
         """
-        Method performs the conversion for the correct reading of characters in HTML. 
-        It takes the raw HTML and removes certain elements from it, 
+        Method performs the conversion for the correct reading of characters in HTML.
+        It takes the raw HTML and removes certain elements from it,
         such as XML statements or opening/closing tags. Returns sanitized HTML.
         https://stackoverflow.com/questions/8733233/filtering-out-certain-bytes-in-python
         """
@@ -69,9 +69,7 @@ class LXMLParser(Parser):
         return elems
 
     @classmethod
-    def get_element_attr_content(
-        cls, node: HtmlElement, attr: str = None, content_attr: str = None
-    ) -> str | None:
+    def get_element_attr_value(cls, node: HtmlElement, attr: str = None) -> str | None:
         """Is responsible for extracting the value from the content key from the node's
         attrib dictionary.
 
@@ -83,11 +81,11 @@ class LXMLParser(Parser):
             str | None: if attr in node.attrib returns node.attrib['content']
                         value. Else None
         """
-        content = None
-        if attr is not None and len(node.attrib) > 0:
-            if node.attrib.has_key(attr) and node.attrib.has_key(content_attr):
-                content = node.attrib[content_attr]
-        return content
+        if len(node.attrib) == 0:
+            return None
+
+        if node.attrib.has_key(attr):
+            return node.attrib.get(attr, None)
 
     @classmethod
     def get_comments(cls, node: HtmlElement) -> List[HtmlElement]:
@@ -226,9 +224,9 @@ class LXMLParser(Parser):
             List[HtmlElement]: list of HtmlElement's.
         """
         regexp_namespace = "http://exslt.org/regular-expressions"
-        items = root.xpath(expression, namespaces={"re": regexp_namespace})
-        return items
-    
+        return root.xpath(expression, namespaces={"re": regexp_namespace})
+
+
     @classmethod
     def css_select(cls, node, selector):
         return node.cssselect(selector)
