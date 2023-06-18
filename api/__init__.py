@@ -3,7 +3,7 @@ from typing import List
 from concurrent.futures import ThreadPoolExecutor
 from config import settings
 from config.utils import create_instance
-from core.webpage_queue.queue import WebPageQueue
+from core.webpage_queue import WebPageQueue
 from core.network.downloader import AsyncDownloader
 
 
