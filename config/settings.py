@@ -3,22 +3,18 @@ Global settings for application
 """
 
 # Number of cores to work with
-
 THREADS = 8
 
 
 # BASE LANGUAGE
-
 LANGUAGE = "pl"
 
 
 # NETWORK SETTINGS
-
 COOKIES_CONSENT = {"CONSENT": "YES+1"}
 
 
 # PARSER SETTINGS
-
 # Default
 DEFAULT_PARSER = "core.parser.lxml_parser.LXMLParser"
 
@@ -28,29 +24,29 @@ PARSAERS = {"lxml": "core.parser.lxml_parser.LXMLParser"}
 
 # DOM CLEANER SETTINGS
 # Base dom cleaner
-CLEANER = "core.cleaner.dom_cleaner.DocumentCleaner"
+CLEANER = "core.bolierplate_removal.dom_cleaner.DocumentCleaner"
 
 # Dom cleaning strategies. Will be applied in order below
 DOM_CLEANERS = [
-    "core.cleaner.dom_cleaning_strategies.AttribiuteRemover",
-    "core.cleaner.dom_cleaning_strategies.TagRemover",
-    "core.cleaner.dom_cleaning_strategies.CommentsRemover",
-    "core.cleaner.dom_cleaning_strategies.TextNormalizer",
-    "core.cleaner.dom_cleaning_strategies.ByAttrValueRemover",
-    "core.cleaner.dom_cleaning_strategies.NoTextRemover",
-    "core.cleaner.dom_cleaning_strategies.NonArticleSubtreeRemover",
-    "core.cleaner.dom_cleaning_strategies.NonSentenceRemover",
-    "core.cleaner.dom_cleaning_strategies.SubtreeMergingStrategy",
-    "core.cleaner.dom_cleaning_strategies.ReplaceTags",
-    "core.cleaner.dom_cleaning_strategies.TransferUpTree",
+    "core.bolierplate_removal.dom_cleaning_strategies.AttribiuteRemover",
+    "core.bolierplate_removal.dom_cleaning_strategies.TagRemover",
+    "core.bolierplate_removal.dom_cleaning_strategies.CommentsRemover",
+    "core.bolierplate_removal.dom_cleaning_strategies.TextNormalizer",
+    "core.bolierplate_removal.dom_cleaning_strategies.ByAttrValueRemover",
+    "core.bolierplate_removal.dom_cleaning_strategies.NoTextRemover",
+    "core.bolierplate_removal.dom_cleaning_strategies.NonArticleSubtreeRemover",
+    "core.bolierplate_removal.dom_cleaning_strategies.NonSentenceRemover",
+    "core.bolierplate_removal.dom_cleaning_strategies.SubtreeMergingStrategy",
+    "core.bolierplate_removal.dom_cleaning_strategies.ReplaceTags",
+    "core.bolierplate_removal.dom_cleaning_strategies.TransferUpTree",
 ]
 
 # Order of links from TextNormalizer class. Any node with text value will be pushed through those links in order to make node flat.
 NODE_CONTENT_NORMALIZERS = [
-    "core.cleaner.node_content_normalizer.NodeTextNormalizer",
-    "core.cleaner.node_content_normalizer.NodeTailNormalizer",
-    "core.cleaner.node_content_normalizer.NodeFlatteningNormalizer",
-    "core.cleaner.node_content_normalizer.TextTailJoiner",
+    "core.bolierplate_removal.node_content_normalizer.NodeTextNormalizer",
+    "core.bolierplate_removal.node_content_normalizer.NodeTailNormalizer",
+    "core.bolierplate_removal.node_content_normalizer.NodeFlatteningNormalizer",
+    "core.bolierplate_removal.node_content_normalizer.TextTailJoiner",
 ]
 
 # List of tags that will never be deleted from dom
