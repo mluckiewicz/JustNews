@@ -3,6 +3,9 @@ from abc import ABC, abstractmethod
 from queue import Queue
 
 
+__all__ = ["WebPageQueue", "Subscriber", "Subject"]
+
+
 class Subscriber(ABC):
     @abstractmethod
     def update(self, subject) -> None:
@@ -57,12 +60,12 @@ class WebPageQueue(Queue, Subject):
             been added.
         `get()`: Retrieves an item from the queue and notifies subscribers that an item
             has been removed.
-    
+
     Examples:
         >>> class ConcreteSubscriber(Subscriber):
         >>>    def update(self, subject, item) -> None:
         >>>        print(f"Add {item}")
-    
+
         >>> q = WebPageQueue()
         >>> wp1 = Downloader(["https://www.google.com"])
         >>> q.put(wp1)
@@ -72,7 +75,7 @@ class WebPageQueue(Queue, Subject):
         >>> q.subscribe(ConcreteSubscriber(), "item_added")
         >>> q.put(wp2)
         <Add Page(url='https://www.google.com')>
-    
+
     """
 
     def __init__(self) -> None:
@@ -103,7 +106,7 @@ class WebPageQueue(Queue, Subject):
             self.event_subscribers[event].append(subscriber)
 
     def unsubscribe(self, subscriber, event=None) -> None:
-        """Removes an observer from the list of subscribers. If an event is specified, 
+        """Removes an observer from the list of subscribers. If an event is specified,
         the observer is removed from the list of subscribers for that specific event.
 
         Args:
@@ -121,7 +124,7 @@ class WebPageQueue(Queue, Subject):
             self.event_subscribers[event].remove(subscriber)
 
     def notify(self, event=None, **kwargs) -> None:
-        """Notifies all subscribers that an event has occurred. If an event is 
+        """Notifies all subscribers that an event has occurred. If an event is
         specified, only the subscribers for that specific event are notified.
 
         Args:
@@ -131,7 +134,7 @@ class WebPageQueue(Queue, Subject):
         Returns:
             None
         """
-        
+
         if event is None:
             for subscriber in self.subscribers:
                 subscriber.update(self, **kwargs)
@@ -141,7 +144,7 @@ class WebPageQueue(Queue, Subject):
                     subscriber.update(self, **kwargs)
 
     def put(self, item) -> None:
-        """Adds an item to the queue and notifies subscribers that an item has been 
+        """Adds an item to the queue and notifies subscribers that an item has been
         added.
 
         Args:
