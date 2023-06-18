@@ -26,9 +26,13 @@ class Extractor(Subscriber):
         # mapping extractor to article attr
         for extractor_name, extractor_settings in settings.EXTRACTORS.items():
             # check if extractor settings ar ok
-            if not ("extractor" in extractor_settings
-                 and "article_attr" in extractor_settings):
-                raise AttributeError(f"Extractor: {extractor_name} dont implement extracor or article_attr setting.")
+            if not (
+                "extractor" in extractor_settings
+                and "article_attr" in extractor_settings
+            ):
+                raise AttributeError(
+                    f"Extractor: {extractor_name} dont implement extracor or article_attr setting."
+                )
 
             # assign name of article property to return data after extraction
             article_attr = extractor_settings["article_attr"]
