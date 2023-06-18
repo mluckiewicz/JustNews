@@ -31,7 +31,7 @@ class JustNews:
 
         If the application is set to run in synchronous mode, it calls the
         `_run_sync()` method. If the application is set to run in threaded mode,
-        it calls the `_run_threading()` method.
+        it calls the `_run_threading()` method.mit
 
         Returns:
             None.
