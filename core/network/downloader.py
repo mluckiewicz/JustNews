@@ -40,12 +40,12 @@ class AsyncDownloader:
             page.url = url
             page.status_code = response.status
             page.raw_html = await response.text(errors="ignore")
-            await queue.put(page) #send notification to queue subscribers
+            await queue.put(page)  # send notification to queue subscribers
 
     async def download_all_sites(self, sites: List[str], queue: Queue) -> None:
-        """ Downloads the contents of a list of sites using asyncio and adds them to a 
+        """Downloads the contents of a list of sites using asyncio and adds them to a
         queue.
-        
+
         In each iteration pops one url form given list.
 
         Args:
@@ -71,7 +71,7 @@ class AsyncDownloader:
             await asyncio.gather(*tasks, return_exceptions=True)
 
     def fetch(self, sites: List[Text], queue: Queue) -> None:
-        """Downloads multiple webpages using the aiohttp library and returns an instance 
+        """Downloads multiple webpages using the aiohttp library and returns an instance
         of the AsyncRequest class with downloaded webpage information.
 
         Args:
