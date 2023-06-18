@@ -3,7 +3,7 @@ from abc import ABC, abstractmethod
 from lxml.html import HtmlElement
 from config import settings
 from core.parser.parser import Parser
-from core.cleaner.dom_cleaning_strategies import (
+from core.bolierplate_removal.dom_cleaning_strategies import (
     RemoverStrategy,
     CompoundRemover,
     AttribiuteRemover,
@@ -52,7 +52,7 @@ class DocumentCleaner(BasicCleaner):
                 self.remove_by_attr_match("id", self.attribiutes_blacklist)
             )
             self.composite.add_strategy(self.remove_article_node_siblings("article"))
-            
+
             # # phase 2 cleaning - Text and Tail
             self.composite.add_strategy(self.normalize_text())
             self.composite.add_strategy(self.remove_no_sentences())

@@ -4,7 +4,7 @@ from abc import ABC, abstractmethod
 import queue
 from lxml.html import HtmlElement
 from core.parser.parser import Parser
-from core.cleaner.node_content_normalizer import NodeContentNormalizer
+from core.bolierplate_removal.node_content_normalizer import NodeContentNormalizer
 from core.text.utils import StringHelper
 from core.utils import compare_lists
 
@@ -279,4 +279,3 @@ class TransferUpTree(RemoverStrategy):
                 except TypeError:  # if parent or grandparent are NoneType
                     continue
         return root
-    

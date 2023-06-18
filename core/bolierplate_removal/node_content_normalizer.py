@@ -86,7 +86,7 @@ class AbstractNormalizer(Normalizer):
 class NodeTextNormalizer(AbstractNormalizer):
     def _sanitize_text_value(self, node: HtmlElement, parser: Parser) -> None:
         "Its resposobile for sanitizing concrete node text value"
-        
+
         node_text = parser.get_text_value(node)
         if node_text is not None:
             node_text = clean_string(node_text)
