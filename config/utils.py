@@ -26,4 +26,3 @@ def create_instance(class_path: str, *agrs, **kwargs) -> Type[object]:
         raise ModuleNotFoundError(
             f"Error creating instance of class '{class_path}': {e}"
         )
-        
