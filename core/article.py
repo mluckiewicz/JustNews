@@ -13,6 +13,9 @@ class Article:
         self.canonical = None
         self.content = None
         self.publish_date = None
+        self.google_title = None
+        self.google_description = None
+        self.google_pubdate = None
 
     @property
     def base_url(self):
@@ -77,6 +80,30 @@ class Article:
     @content.setter
     def content(self, value):
         self._content = value
+
+    @property
+    def google_title(self):
+        return self._google_title
+
+    @google_title.setter
+    def google_title(self, value):
+        self._google_title = value
+
+    @property
+    def google_description(self):
+        return self._google_description
+
+    @google_description.setter
+    def google_description(self, value):
+        self._google_description = value
+
+    @property
+    def google_pubdate(self):
+        return self._google_pubdate
+
+    @google_pubdate.setter
+    def google_pubdate(self, value):
+        self._google_pubdate = value
 
     def as_dict(self):
         return vars(self)
