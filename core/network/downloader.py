@@ -16,7 +16,7 @@ class AsyncDownloader:
         asyncio.set_event_loop(self.loop)
 
     async def download_single_site(
-        self, session: ClientSession, url: Text, queue: Queue
+        self, session: ClientSession, page: Text, queue: Queue
     ) -> None:
         """Downloads a single webpage using the aiohttp library and returns an instance
         of the Page class.
@@ -31,13 +31,11 @@ class AsyncDownloader:
         """
 
         async with session.get(
-            url,
+            page.url,
             headers={"User-Agent": f"{self.headers}"},
             ssl=True,
             cookies=self.cookies,
         ) as response:
-            page = WebPage()
-            page.url = url
             page.status_code = response.status
             page.raw_html = await response.text(errors="ignore")
             await queue.put(page)  # send notification to queue subscribers
@@ -62,10 +60,10 @@ class AsyncDownloader:
         async with ClientSession() as session:
             tasks = []
             while len(sites) > 0:
-                url = sites.pop()
-                if url_validator(url):
+                page = sites.pop()
+                if url_validator(page.url):
                     task = asyncio.ensure_future(
-                        self.download_single_site(session, url, queue)
+                        self.download_single_site(session, page, queue)
                     )
                     tasks.append(task)
             await asyncio.gather(*tasks, return_exceptions=True)
