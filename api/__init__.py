@@ -3,28 +3,32 @@ from typing import List
 from concurrent.futures import ThreadPoolExecutor
 from config import settings
 from config.utils import create_instance
-from core.webpage_queue import WebPageQueue
+from core.webpage_queue import WebPageQueue, WebPage
 from core.network.downloader import AsyncDownloader
 
 
 class JustNews:
     def __init__(
         self,
-        urls: List[str] = None,
+        urls: List[str] | List[WebPage] = None,
         queue: WebPageQueue = None,
         producer: AsyncDownloader = None,
-        sync=True,
+        sync: bool = True,
+        url_collector: str = None,
         parser_name: str = None,
     ) -> None:
         self._sync = sync
-        self._urls = urls
+        self._urls = urls  # rename variable to be more specific
         self._queue = queue or WebPageQueue()
         self._producer = producer or AsyncDownloader()
-        self._consumers = None
-        self._treads = None
         self._parser = create_instance(
             settings.PARSAERS.get(parser_name, settings.DEFAULT_PARSER)
         )
+        self._resaults = []
+
+    @property
+    def resaults(self):
+        return self._resaults
 
     def run(self) -> None:
         """Runs the application using either synchronous or threaded mode.
@@ -39,6 +43,7 @@ class JustNews:
         Raises:
             None.
         """
+
         if self._sync:
             self.synchronous_mode()
         else:
@@ -53,7 +58,7 @@ class JustNews:
         Raises:
             None.
         """
-        pass
+        raise NotImplementedError("Sync mode is in development stage")
 
     def threading_mode(self) -> None:
         """
@@ -63,7 +68,9 @@ class JustNews:
         It then proceeds to process URLs using the specified threading mode.
         """
         with ThreadPoolExecutor(max_workers=settings.THREADS) as thread_pool:
-            subscriber = create_instance(settings.EXTRACTOR, thread_pool, self._parser)
+            subscriber = create_instance(
+                settings.EXTRACTOR, thread_pool, self._parser, self._resaults
+            )
             self._queue.subscribe(subscriber, "item_added")
             self.process_urls()
 
