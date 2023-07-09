@@ -3,10 +3,12 @@ import string
 import re
 import os
 import codecs
+import datetime
+import unicodedata
 
 
 __all__ = [
-    "StringHelper", 
+    "StringHelper",
     "ResourceLoader"
 ]
 
@@ -92,17 +94,47 @@ class StringHelper:
         """
         return "".join(c for c in text if __class__.valid_char_ordinal(c))
 
+    @staticmethod
+    def calculate_pubtime(passed_time: str) -> datetime.datetime:
+        """
+        Calculates the publication time based on the passed_time string.
+
+        Args:
+            passed_time (str): A string representing the time passed since publication.
+
+        Returns:
+            datetime.datetime: The calculated publication time.
+
+        Example:
+            calculate_pubtime("30 min") returns a datetime object representing the publication time 30 minutes ago.
+        """
+        current = datetime.datetime.now()
+        normalized = unicodedata.normalize("NFKD", passed_time)
+        tokkens = normalized.split(" ")
+
+        # Checks whether the publication took place within the last hour
+        if not tokkens[0].isdigit():
+            tokkens.insert(0, "1")
+
+        if tokkens[1].startswith("min"):
+            pubtime = current.replace(second=0, microsecond=0) - datetime.timedelta(minutes=int(tokkens[0]))
+
+        if tokkens[1].startswith("godz"):
+            pubtime = current.replace(second=0, microsecond=0) - datetime.timedelta(hours=int(tokkens[0]))
+
+        return pubtime
+
 
 class ResourceLoader(object):
     @staticmethod
     def load_resoruce_file(filename):
-        
+
         if not os.path.isabs(filename):
             dirpath = os.path.abspath(os.path.dirname(__file__))
             path = os.path.join(dirpath, 'resources', filename)
         else:
             path = filename
-            
+
         try:
             with codecs.open(path, 'r', 'utf-8') as f:
                 content = f.read()
