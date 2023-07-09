@@ -1,4 +1,6 @@
 from api import JustNews
+from core.links_collector.collector import GoogleEngineCollector
+
 urls = [
         # "https://tvn24.pl/tvnwarszawa/komunikacja/warszawa-tragiczny-wypadek-na-torach-nie-zyje-15-latka-utrudnienia-na-dworcu-gdanskim-6236826",
         "https://wydarzenia.interia.pl/zagranica/news-tragiczny-wypadek-w-australii-dzieci-utknely-w-samochodzie-n,nId,6502404",
@@ -93,5 +95,10 @@ urls = [
         # "https://www.iturek.net/rozmaitosci/malanow-wypadek-w-czachulcu-dwie",
 ]
 
-jn = JustNews(urls=urls, sync=False, parser_name="lxml")
+
+query = "wypadek"
+collected_links = GoogleEngineCollector(query=query).get_webpages()
+
+jn = JustNews(urls=collected_links, sync=False, parser_name="lxml")
 jn.run()
+print(jn.resaults)
