@@ -9,18 +9,17 @@ from config.utils import create_instance
 
 
 class Extractor(Subscriber):
-    def __init__(self, thread_pool: ThreadPoolExecutor, parser: Parser) -> None:
+    def __init__(self, thread_pool: ThreadPoolExecutor, parser: Parser, resaults_container: list) -> None:
         self.thread_pool = thread_pool
         self.parser = parser
+        # use list reference
+        self.resaults_container = resaults_container
 
     def update(self, web_queue: WebPageQueue) -> None:
-        self.thread_pool.submit(self.extract, web_queue.get())
+        future = self.thread_pool.submit(self.extract, web_queue.get())
+        self.resaults_container.append(future.result())
 
     def extract(self, page: WebPage) -> object:
-        print(
-            f"Przetwarzam element: {page} wątkiem o identyfikatorze: {threading.get_ident()}"
-        )
-
         root = self.parser.fromstring(page.raw_html)
 
         # mapping extractor to article attr
@@ -43,3 +42,5 @@ class Extractor(Subscriber):
                     settings.EXTRACTORS[extractor_name]["extractor"], root, self.parser
                 )
                 setattr(page.article, article_attr, extractor.extract())
+
+        return page
