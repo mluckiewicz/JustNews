@@ -1,9 +1,9 @@
 from abc import ABC, abstractmethod
 import requests
-from bs4 import BeautifulSoup
 from core.parser.lxml_parser import LXMLParser
 from core.network.utils import get_random_useragent
 from core.webpage_queue.webpage import WebPage
+from core.text.utils import StringHelper
 from config import settings
 
 
@@ -12,6 +12,23 @@ class LinksCollectorInterface(ABC):
 
 
 class GoogleEngineCollector(LinksCollectorInterface):
+    """
+    A class for collecting webpages using the Google search engine.
+
+    Args:
+        query (str): The query string for the search.
+        search_engine (str, optional): The URL of the Google search engine. Defaults to "https://www.google.com/search".
+        google_domain (str, optional): The Google domain to use. Defaults to "google.pl".
+        location_requested (str, optional): The location requested for the search. Defaults to "Poland".
+        tbm (str, optional): The type of search results to retrieve. Defaults to "nws".
+        num (int, optional): The number of results to return. Defaults to 20.
+        start (int, optional): The starting index of the results. Defaults to 0.
+        lang (str, optional): The language for the search. Defaults to None.
+        gl (str, optional): The Google host for the search. Defaults to None.
+        tbs (str, optional): Additional search parameters. Defaults to "qdr:h12,sbd:1".
+        proxy (dict, optional): Proxy settings for the requests. Defaults to None.
+    """
+
     __slots__ = [
         "query",
         "search_engine",
@@ -40,6 +57,23 @@ class GoogleEngineCollector(LinksCollectorInterface):
         tbs: str = "qdr:h12,sbd:1",
         proxy: dict = None,
     ):
+        """
+        Initializes a GoogleEngineCollector object.
+
+        Args:
+            query (str): The query string for the search.
+            search_engine (str, optional): The URL of the Google search engine. Defaults to "https://www.google.com/search".
+            google_domain (str, optional): The Google domain to use. Defaults to "google.pl".
+            location_requested (str, optional): The location requested for the search. Defaults to "Poland".
+            tbm (str, optional): The type of search results to retrieve. Defaults to "nws".
+            num (int, optional): The number of results to return. Defaults to 20.
+            start (int, optional): The starting index of the results. Defaults to 0.
+            lang (str, optional): The language for the search. Defaults to None.
+            gl (str, optional): The Google host for the search. Defaults to None.
+            tbs (str, optional): Additional search parameters. Defaults to "qdr:h12,sbd:1".
+            proxy (dict, optional): Proxy settings for the requests. Defaults to None.
+        """
+
         self.user_agent = {"User-Agent": get_random_useragent()[0]}
         self.cookies = settings.COOKIES_CONSENT  # allows to accept policies
         self.q = query.replace(" ", "+")  # query string
@@ -56,6 +90,12 @@ class GoogleEngineCollector(LinksCollectorInterface):
         self.pages = []
 
     def setup_proxy(self):
+        """
+        Set up proxy settings for requests.
+
+        Returns:
+            dict: Proxy settings.
+        """
         proxies = None
         if self.proxy:
             if self.proxy[:5] == "https":
@@ -68,11 +108,11 @@ class GoogleEngineCollector(LinksCollectorInterface):
 
     def send_query(self):
         """
-        The method is responsible for sending the request to the search engine.
-        The request contains specific parameters set when the instance object
-        was initialized.
-        """
+        Send the search query to the Google search engine.
 
+        Returns:
+            str: The response text.
+        """
         response = requests.get(
             url=self.search_engine,
             headers=self.user_agent,
@@ -96,12 +136,12 @@ class GoogleEngineCollector(LinksCollectorInterface):
 
         return response.text
 
-    def read_html_file(self):
-        with open("test.html", "r") as file:
-            content = file.readlines()
-        return content
-
-    def extract_links(self):
+    def extract_webpages(self):
+        """
+        Extract webpages from the search results and store them in the `pages` list.
+        For each a tag descendant in container with id equal rso will create WebPage instance.
+        In next step will extract href value, tile, description and pubdate.
+        """
         raw_html = self.send_query()
         n, m = 0, 4  # index values to slice subxpath resault
         root = LXMLParser.fromstring(raw_html)
@@ -110,14 +150,15 @@ class GoogleEngineCollector(LinksCollectorInterface):
         for link in links:
             page = WebPage()
 
+            # extraction
             url = LXMLParser.get_element_attr_value(link, "href")
 
-            heading = LXMLParser.xpath(
+            title = LXMLParser.xpath(
                 link,
                 'descendant::div[normalize-space(text())][contains(@role,"heading")]',
             )[0].text
 
-            lead = LXMLParser.xpath(
+            description = LXMLParser.xpath(
                 link,
                 'descendant::div[normalize-space(text())][not(contains(@role,"heading"))]',
             )[0].text
@@ -127,58 +168,16 @@ class GoogleEngineCollector(LinksCollectorInterface):
                 'descendant::span[normalize-space(text())]',
             )[2].text
 
-            print(heading)
-            print(lead)
-            print(pub_date)
+            # assigment
+            page.url = url
+            page.article.google_title = title
+            page.article.google_description = description
+            page.article.google_pubdate = StringHelper.calculate_pubtime(pub_date)
+            self.pages.append(page)
 
-    def collect_links(self):
-        """
-        The method is responsible for sending the request to the search engine.
-        The request contains specific parameters set when the instance object
-        was initialized.
-        """
-
-        # Make request
-        self._request()
-
-        # Collect search result
-        soup = BeautifulSoup(self.response.text, "html.parser")
-
-        # Find all links in div id=search
-        anchors = soup.find("div", attrs={"id": "search"}).find_all("a")
-
-        # Process links
-        for anchor in anchors:
-            # ?
-            # Czy nie lepiej by było aby collector zwracał obiekt Page?
-
-            link = anchor.attrs["href"]
-            title = anchor.find("div", attrs={"role": "heading"}).text.replace("\n", "")
-            date = anchor.find("div", attrs={"style": "bottom:0px"}).text.replace(
-                "\xa0", " "
-            )
-
-            self.articles.append(
-                {
-                    "title": title,
-                    "link": link,
-                    "date": date,
-                }
-            )
-        return self
-
-    def get_news(self):
-        """Return all founded articles as list(dict)"""
-        if self._check_if_articles():
-            return self.articles
-
-    def get_links(self):
-        """returns links of collected articles"""
-        if self._check_if_articles():
-            return [article["link"] for article in self.articles]
-
-    def get_anchors(self):
-        return self.articles
+    def get_webpages(self):
+        self.extract_webpages()
+        return self.pages
 
 
 class GoogleNewsRSSCollector(LinksCollectorInterface):
