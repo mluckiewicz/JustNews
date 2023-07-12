@@ -18,8 +18,8 @@ class WebPage:
         get_page(self): Returns a Page object with updated properties.
     """
 
-    def __init__(self):
-        self.url: str = None
+    def __init__(self, url: str = None):
+        self.url = url
         self.status_code: int = None
         self.raw_html: str = None
         self.article: object = None
