@@ -14,21 +14,36 @@ class JustNews:
         queue: WebPageQueue = None,
         producer: AsyncDownloader = None,
         sync: bool = True,
-        url_collector: str = None,
         parser_name: str = None,
     ) -> None:
-        self._sync = sync
-        self._urls = urls  # rename variable to be more specific
-        self._queue = queue or WebPageQueue()
-        self._producer = producer or AsyncDownloader()
-        self._parser = create_instance(
+        self.sync = sync
+        self.urls = urls  # rename variable to be more specific
+        self.queue = queue or WebPageQueue()
+        self.producer = producer or AsyncDownloader()
+        self.parser = create_instance(
             settings.PARSAERS.get(parser_name, settings.DEFAULT_PARSER)
         )
-        self._resaults = []
+        self.resaults = []
 
     @property
     def resaults(self):
         return self._resaults
+
+    @resaults.setter
+    def resaults(self, value):
+        self._resaults = value
+
+    @property
+    def urls(self):
+        return self._urls
+
+    @urls.setter
+    def urls(self, value):
+        if any([isinstance(item, str) for item in value]):
+            # Conversion urls to an Webpage
+            self._urls = [WebPage(url=url) for url in value]
+        else:
+            self._urls = value
 
     def run(self) -> None:
         """Runs the application using either synchronous or threaded mode.
@@ -44,7 +59,7 @@ class JustNews:
             None.
         """
 
-        if self._sync:
+        if self.sync:
             self.synchronous_mode()
         else:
             self.threading_mode()
@@ -69,9 +84,9 @@ class JustNews:
         """
         with ThreadPoolExecutor(max_workers=settings.THREADS) as thread_pool:
             subscriber = create_instance(
-                settings.EXTRACTOR, thread_pool, self._parser, self._resaults
+                settings.EXTRACTOR, thread_pool, self.parser, self.resaults
             )
-            self._queue.subscribe(subscriber, "item_added")
+            self.queue.subscribe(subscriber, "item_added")
             self.process_urls()
 
     def process_urls(self) -> None:
@@ -81,5 +96,5 @@ class JustNews:
         producer's `fetch()` method to fetch the URLs and put them in the queue.
         """
 
-        while len(self._urls) > 0:
-            self._producer.fetch(self._urls, self._queue)
+        while len(self.urls) > 0:
+            self.producer.fetch(self.urls, self.queue)
