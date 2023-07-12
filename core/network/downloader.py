@@ -16,7 +16,7 @@ class AsyncDownloader:
         asyncio.set_event_loop(self.loop)
 
     async def download_single_site(
-        self, session: ClientSession, page: Text, queue: Queue
+        self, session: ClientSession, page: Text | WebPage, queue: Queue
     ) -> None:
         """Downloads a single webpage using the aiohttp library and returns an instance
         of the Page class.
