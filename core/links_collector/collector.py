@@ -143,7 +143,6 @@ class GoogleEngineCollector(LinksCollectorInterface):
         In next step will extract href value, tile, description and pubdate.
         """
         raw_html = self.send_query()
-        n, m = 0, 4  # index values to slice subxpath resault
         root = LXMLParser.fromstring(raw_html)
         links = LXMLParser.xpath(root, '//*[@id="rso"]/descendant::a')
 
@@ -153,27 +152,51 @@ class GoogleEngineCollector(LinksCollectorInterface):
             # extraction
             url = LXMLParser.get_element_attr_value(link, "href")
 
-            title = LXMLParser.xpath(
-                link,
-                'descendant::div[normalize-space(text())][contains(@role,"heading")]',
-            )[0].text
+            title = self.get_node_data(
+                LXMLParser.xpath(
+                    link,
+                    'descendant::div[normalize-space(text())][contains(@role,"heading")]',
+                ),
+                0,
+            )
 
-            description = LXMLParser.xpath(
-                link,
-                'descendant::div[normalize-space(text())][not(contains(@role,"heading"))]',
-            )[0].text
+            description = self.get_node_data(
+                LXMLParser.xpath(
+                    link,
+                    'descendant::div[normalize-space(text())][not(contains(@role,"heading"))]',
+                ),
+                0,
+            )
 
-            pub_date = LXMLParser.xpath(
-                link,
-                'descendant::span[normalize-space(text())]',
-            )[2].text
+            pub_date = self.get_node_data(
+                LXMLParser.xpath(
+                    link,
+                    "descendant::span[normalize-space(text())]",
+                ),
+                -1,
+            )
 
-            # assigment
+            # assigment extracted values to page instance attrs
             page.url = url
             page.article.google_title = title
             page.article.google_description = description
             page.article.google_pubdate = StringHelper.calculate_pubtime(pub_date)
             self.pages.append(page)
+
+    def get_node_data(self, xpath_resault: list, index: int) -> str | None:
+        """ returns item at given index form xpath resault list or None
+
+        Args:
+            xpath_resault (list): _description_
+            index (int): _description_
+
+        Returns:
+            str | None: _description_
+        """
+        try:
+            return xpath_resault[index].text
+        except IndexError:
+            return None
 
     def get_webpages(self):
         self.extract_webpages()
